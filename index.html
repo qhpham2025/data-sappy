@@ -1,0 +1,933 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sappy · Master Data Pet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="engine.js"></script>
+<style>
+:root{
+  --bg:#fff8f3; --card:#fff; --ink:#3a2e39; --muted:#8a7b88; --line:#f3e3ea;
+  --pink:#ff7fa8; --pink2:#ffe0ea; --mint:#4cc79a; --mint2:#dcf7ec; --sun:#ffc23d; --sun2:#fff3cf;
+  --sky:#5aaef5; --sky2:#e0f0ff; --grape:#9b7bff; --grape2:#efe9ff; --red:#ff5f6d; --red2:#ffe3e5;
+  --shadow:0 4px 0 rgba(58,46,57,.07), 0 10px 26px rgba(58,46,57,.07);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Nunito,system-ui,sans-serif;
+  background-image:radial-gradient(#ffeaf1 1.2px,transparent 1.2px);background-size:24px 24px}
+h1,h2,h3{font-family:'Baloo 2',Nunito,sans-serif;margin:.2em 0 .4em;line-height:1.15}
+h2{font-size:26px} h3{font-size:19px}
+small,.muted{color:var(--muted)}
+button{font:inherit;cursor:pointer}
+header{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:14px;padding:8px 18px;background:rgba(255,248,243,.92);backdrop-filter:blur(8px);border-bottom:2px dashed var(--line)}
+.brand{display:flex;align-items:center;gap:8px}
+.brand b{font-family:'Baloo 2';font-size:24px;display:block;line-height:1}
+.brand small{font-size:12px}
+.hp{display:flex;align-items:center;gap:8px;font-weight:800;font-size:13px}
+.hbar{width:220px;height:16px;border-radius:99px;background:#fff;border:2px solid var(--ink);overflow:hidden}
+.hbar.sm{width:110px;height:12px}
+.hbar i{display:block;height:100%;background:linear-gradient(90deg,var(--red),var(--sun),var(--mint));background-size:220px 100%;transition:width .6s}
+.spacer{flex:1}
+.role select{font:inherit;font-weight:700;border:2px solid var(--ink);border-radius:12px;padding:4px 8px;background:#fff}
+.bell{position:relative;border:2px solid var(--ink);background:#fff;border-radius:12px;padding:3px 9px;font-size:18px}
+.bell span{position:absolute;top:-8px;right:-8px;background:var(--red);color:#fff;border-radius:99px;font-size:11px;padding:0 6px;font-weight:800}
+.bell span:empty{display:none}
+nav{position:sticky;top:60px;z-index:19;background:rgba(255,248,243,.96);border-bottom:2px dashed var(--line)}
+.sections{display:flex;justify-content:center;gap:4px;padding:8px 18px 0;border-bottom:2px solid var(--ink)}
+.sections button{border:2px solid var(--ink);border-bottom:none;border-radius:16px 16px 0 0;background:#f6ece6;padding:6px 20px;font-family:'Baloo 2';font-size:16px;font-weight:700;color:var(--muted);margin-bottom:-2px;transition:background .15s}
+.sections button:hover{background:#fff}
+.sections button.on{background:#fff;color:var(--ink);padding-bottom:8px;position:relative}
+.sections button.on::after{content:'';position:absolute;left:0;right:0;bottom:-2px;height:4px;background:#fff}
+.subtabs{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:9px 18px;background:#fff}
+.subtabs button{white-space:nowrap;border:1.5px solid transparent;background:none;border-radius:99px;padding:3px 13px;font-weight:800;font-size:14px;color:var(--muted)}
+.subtabs button:hover{background:var(--pink2);color:var(--ink)}
+.subtabs button.on{background:var(--pink);border-color:var(--ink);color:#fff;box-shadow:0 2px 0 var(--ink)}
+main{max-width:1240px;margin:0 auto;padding:16px 18px 80px}
+.tour{position:fixed;left:16px;bottom:16px;z-index:45;width:360px;background:#fff;border:2px solid var(--ink);border-radius:20px;padding:12px 14px;box-shadow:0 5px 0 var(--ink)}
+.tour h3{margin:2px 0 4px}
+.tour p{margin:0 0 10px;font-size:14px}
+.tour .bar{height:6px;border-radius:9px;background:var(--line);overflow:hidden;margin-bottom:8px}
+.tour .bar i{display:block;height:100%;background:var(--pink)}
+.guide h3{margin-top:14px}.guide li{margin-bottom:4px}
+.card{background:var(--card);border:2px solid var(--ink);border-radius:22px;padding:18px 22px;box-shadow:var(--shadow);margin-bottom:18px}
+.card h2:first-child,.card h3:first-child{margin-top:0}
+.center{text-align:center}
+.grid2{display:grid;grid-template-columns:1.25fr 1fr;gap:16px;align-items:start}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.kpi{background:#fff;border:2px solid var(--ink);border-radius:18px;padding:12px 14px;box-shadow:var(--shadow)}
+.kpi b{font-family:'Baloo 2';font-size:30px;display:block;line-height:1.1}
+.kpi small{display:block}
+.btn{border:2px solid var(--ink);border-radius:14px;padding:7px 14px;font-weight:800;background:#fff;box-shadow:0 3px 0 var(--ink);transition:transform .08s}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.btn.pink{background:var(--pink);color:#fff}.btn.mint{background:var(--mint);color:#fff}.btn.sun{background:var(--sun)}.btn.sky{background:var(--sky);color:#fff}
+.btn.ghost{background:#fff}.btn.big{font-size:18px;padding:10px 22px;margin-top:10px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.xs{padding:2px 9px;font-size:12px;border-radius:10px;box-shadow:0 2px 0 var(--ink)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.pill{display:inline-block;border-radius:99px;padding:1px 9px;font-size:12px;font-weight:800;border:1.5px solid currentColor}
+.pill.red{color:#d63c4b;background:var(--red2)}.pill.mint{color:#1f8a63;background:var(--mint2)}.pill.sun{color:#9a6a00;background:var(--sun2)}.pill.sky{color:#1f6fb5;background:var(--sky2)}.pill.grape{color:#5b3fd1;background:var(--grape2)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:7px 8px;border-bottom:1.5px dashed var(--line);text-align:left;vertical-align:top}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.note{background:var(--sun2);border:2px dashed #e0b23a;border-radius:16px;padding:10px 14px;margin:10px 0}
+.note.red{background:var(--red2);border-color:#f19aa3}
+.note.mint{background:var(--mint2);border-color:#86d9b8}
+.assume{font-size:12px;color:var(--muted);font-style:italic}
+
+/* ---------- Sappy the blob ---------- */
+.sappy{position:relative;width:var(--s);height:calc(var(--s)*1.02);display:inline-block;vertical-align:middle}
+.sappy .body{position:absolute;inset:0 0 9% 0;border-radius:50% 50% 46% 46%/60% 60% 40% 40%;
+  background:radial-gradient(circle at 32% 26%,rgba(255,255,255,.9) 0 5%,transparent 6%),linear-gradient(165deg,var(--c1),var(--c2));
+  border:calc(var(--s)*.02) solid var(--ink);box-shadow:inset calc(var(--s)*-.06) calc(var(--s)*-.07) 0 rgba(0,0,0,.07);animation:bob 2.4s ease-in-out infinite;transform-origin:50% 100%}
+.sappy.happy{--c1:#ffe0ea;--c2:#ff9fbf}.sappy.ok{--c1:#fff3c4;--c2:#ffcf55}.sappy.sad{--c1:#e2f1ff;--c2:#8ec8ff}.sappy.sick{--c1:#eef8d8;--c2:#a6d47f}
+.sappy .eye{position:absolute;top:38%;width:10%;height:13%;background:var(--ink);border-radius:50%}
+.sappy .eye.l{left:29%}.sappy .eye.r{right:29%}
+.sappy .eye::after{content:'';position:absolute;top:16%;left:20%;width:38%;height:34%;background:#fff;border-radius:50%}
+.sappy.happy .eye{height:11%;border-radius:50% 50% 45% 45%}
+.sappy .blush{position:absolute;top:55%;width:14%;height:7%;background:#ff6f99;opacity:.4;border-radius:50%}
+.sappy .blush.l{left:14%}.sappy .blush.r{right:14%}
+.sappy .mouth{position:absolute;left:50%;top:55%;width:18%;height:11%;transform:translateX(-50%);border:calc(var(--s)*.022) solid var(--ink);border-top:none;border-radius:0 0 50% 50%/0 0 100% 100%}
+.sappy.happy .mouth{background:#ff6f8f;height:13%}
+.sappy.ok .mouth{height:0;border-left:none;border-right:none;border-radius:4px;top:62%;width:13%}
+.sappy.sad .mouth,.sappy.sick .mouth{top:63%;height:8%;border-top:calc(var(--s)*.022) solid var(--ink);border-bottom:none;border-radius:50% 50% 0 0/100% 100% 0 0}
+.sappy.sick .eye{height:3%;top:44%;border-radius:3px}.sappy.sick .eye::after{display:none}
+.sappy .tear{display:none;position:absolute;left:30%;top:51%;width:6%;height:10%;background:#5aaef5;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;animation:drip 1.8s infinite}
+.sappy.sad .tear{display:block}
+.sappy .sweat{display:none;position:absolute;right:12%;top:18%;font-size:calc(var(--s)*.16)}
+.sappy.sick .sweat{display:block}
+.sappy .hat{position:absolute;left:50%;top:-24%;transform:translateX(-50%) rotate(-10deg);font-size:calc(var(--s)*.4);z-index:2;line-height:1}
+.sappy .shadow{position:absolute;bottom:0;left:22%;right:22%;height:8%;background:rgba(58,46,57,.14);border-radius:50%}
+.sappy.eat .body{animation:chomp .35s 4}
+.sappy.spit .body{animation:shake .35s 4}
+.sappy.shock .body{animation:shake .2s 6}
+@keyframes bob{50%{transform:translateY(-5%) scale(1.03,.97)}}
+@keyframes chomp{50%{transform:scale(1.15,.85)}}
+@keyframes shake{25%{transform:translateX(-7%) rotate(-6deg)}75%{transform:translateX(7%) rotate(6deg)}}
+@keyframes drip{0%{transform:translateY(0);opacity:1}100%{transform:translateY(160%);opacity:0}}
+
+.bubble{position:relative;display:inline-block;max-width:340px;background:#fff;border:2px solid var(--ink);border-radius:20px;padding:10px 14px;margin-top:12px;font-weight:700;text-align:left}
+.bubble::before{content:'';position:absolute;top:-11px;left:50%;width:18px;height:18px;background:#fff;border-left:2px solid var(--ink);border-top:2px solid var(--ink);transform:translateX(-50%) rotate(45deg)}
+.bubble.bad{background:var(--red2)}.bubble.bad::before{background:var(--red2)}
+.bubble.good{background:var(--mint2)}.bubble.good::before{background:var(--mint2)}
+
+/* ---------- Feed form ---------- */
+.picks{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px}
+.pick{border:2px solid var(--ink);border-radius:16px;background:#fff;padding:8px 12px;font-size:22px;display:flex;flex-direction:column;align-items:center;min-width:92px;box-shadow:0 3px 0 var(--ink)}
+.pick span{font-size:13px;font-weight:800}
+.pick.on{background:var(--sun)}
+.field{margin-bottom:10px}
+.field label{display:block;font-weight:800;font-size:13px;margin-bottom:3px}
+.field input,.field select,textarea{width:100%;font:inherit;border:2px solid #d9c9d3;border-radius:12px;padding:8px 10px;background:#fffdfb}
+.field input:focus,.field select:focus,textarea:focus{outline:none;border-color:var(--pink)}
+.field.err input,.field.err select{border-color:var(--red);background:var(--red2)}
+.req{color:var(--red);font-style:normal}
+.lock{font-size:11px;background:var(--grape2);color:#5b3fd1;border-radius:99px;padding:1px 7px;margin-left:4px}
+.tag{font-size:11px;background:var(--sky2);color:#1f6fb5;border-radius:99px;padding:1px 7px;margin-left:4px}
+.route{background:var(--grape2);border-radius:14px;padding:8px 12px;font-weight:700;font-size:14px}
+.route .step{display:inline-block;background:#fff;border:1.5px solid var(--ink);border-radius:10px;padding:0 8px;margin:2px}
+.route .step.cond{background:var(--sun)}
+.hint{margin-top:12px;font-weight:700;border-radius:14px;padding:8px 12px;display:none;text-align:left}
+.hint.show{display:block;background:var(--sun2);border:2px dashed #e0b23a}
+.hint.hot{background:var(--red2);border-color:#f19aa3}
+.sticky{position:sticky;top:120px}
+
+/* ---------- Swipe ---------- */
+.deck{position:relative;height:470px;max-width:440px;margin:0 auto}
+.scard{position:absolute;inset:0;background:#fff;border:2.5px solid var(--ink);border-radius:26px;padding:18px;box-shadow:var(--shadow);transition:transform .25s,opacity .25s;touch-action:none;user-select:none;overflow:hidden}
+.scard.top{cursor:grab}
+.scard:nth-child(2){transform:translateY(10px) scale(.96);z-index:-1}
+.scard:nth-child(3){transform:translateY(20px) scale(.92);z-index:-2}
+.stamp{position:absolute;top:22px;font-family:'Baloo 2';font-size:28px;border:4px solid;border-radius:12px;padding:0 10px;opacity:0;z-index:3;pointer-events:none}
+.stamp.yes{left:18px;color:var(--mint);transform:rotate(-14deg)}.stamp.no{right:18px;color:var(--red);transform:rotate(14deg)}
+.sc-h{display:flex;gap:10px;align-items:center}.sc-h b{font-family:'Baloo 2';font-size:20px;display:block;line-height:1.1}
+.ticon{font-size:34px}
+.sc-meta{margin:8px 0;font-size:13px}
+.sc-fields table td{padding:4px 6px;font-size:13px}
+.sc-route{font-size:12px;margin-top:6px}
+.sc-route span{padding:1px 6px;border-radius:8px;background:#f5eef2}
+.sc-route span.done{background:var(--mint2)}.sc-route span.waiting{background:var(--sun);font-weight:800}
+.sc-foot{position:absolute;left:18px;right:18px;bottom:14px;display:flex;gap:10px;align-items:center;font-weight:700;font-size:13px}
+.deckbtns{display:flex;justify-content:center;gap:30px;margin-top:18px}
+.round{width:70px;height:70px;border-radius:50%;border:3px solid var(--ink);font-size:30px;background:#fff;box-shadow:0 4px 0 var(--ink)}
+.round.yes{background:var(--mint2)}.round.no{background:var(--red2)}
+.masked{background:var(--grape2);border-radius:8px;padding:0 6px;cursor:pointer;font-weight:800;color:#5b3fd1}
+
+/* ---------- Track ---------- */
+.tcard{border:2px solid var(--ink);border-radius:20px;padding:12px 14px;margin-bottom:12px;background:#fff}
+.t-h{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.t-h b{font-family:'Baloo 2';font-size:17px}
+.parcel{display:flex;align-items:flex-start;margin:10px 0 4px;overflow-x:auto}
+.pstep{flex:1;min-width:96px;text-align:center;position:relative;font-size:12px}
+.pstep::before{content:'';position:absolute;top:17px;left:-50%;width:100%;height:4px;background:#eadde4;z-index:0}
+.pstep:first-child::before{display:none}
+.pstep.done::before{background:var(--mint)}
+.pstep .dot{position:relative;z-index:1;width:36px;height:36px;margin:0 auto 3px;border-radius:50%;border:2px solid var(--ink);background:#fff;display:flex;align-items:center;justify-content:center;font-size:17px}
+.pstep.done .dot{background:var(--mint2)}
+.pstep.waiting .dot{background:var(--sun);animation:pulse 1.2s infinite}
+.pstep.waiting.od .dot{background:var(--red2)}
+.pstep.rejected .dot{background:var(--red2)}
+.pstep b{display:block;font-size:12px}
+@keyframes pulse{50%{transform:scale(1.15)}}
+.diary{max-height:620px;overflow:auto}
+.dentry{border-left:4px solid var(--pink2);padding:4px 10px;margin-bottom:6px;font-size:13px}
+.dentry.bad{border-color:var(--red);background:var(--red2)}
+.dentry code{font-size:11px;color:var(--muted)}
+
+/* ---------- Garden ---------- */
+.garden{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.plot{background:#fff;border:2px solid var(--ink);border-radius:20px;padding:10px 8px 0;cursor:pointer;box-shadow:var(--shadow);overflow:hidden;transition:transform .15s}
+.plot:hover{transform:translateY(-3px)}
+.plot.on{outline:4px solid var(--pink);outline-offset:2px}
+.plot-h{font-family:'Baloo 2';font-size:17px;text-align:center}
+.bed{display:flex;justify-content:space-around;align-items:flex-end;height:150px}
+.flower{display:flex;flex-direction:column;align-items:center;font-size:11px;font-weight:800;text-align:center}
+.flower .head{font-size:30px;line-height:1;animation:sway 3s ease-in-out infinite;transform-origin:50% 100%}
+.flower .stem{width:5px;background:#5cbf6a;border-radius:3px}
+.flower.wilt .head{transform:rotate(60deg);animation:none;filter:saturate(.6)}
+.flower.wilt .stem{background:#b59a6a}
+.flower.bloom .head::after{content:'✨';font-size:14px;position:absolute;margin-left:-6px}
+@keyframes sway{50%{transform:rotate(6deg)}}
+.soil{height:14px;background:repeating-linear-gradient(90deg,#b07a4f 0 10px,#9c6a42 10px 20px);margin:0 -8px}
+.plot-f{font-size:12px;font-weight:700;text-align:center;padding:6px 2px;background:#f8efe8;margin:0 -8px}
+.heat td.cell{text-align:center;font-weight:800;border-radius:8px}
+.actions li{margin-bottom:8px}
+.chartbox{position:relative;height:280px}
+
+/* ---------- Sorter ---------- */
+.bins{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.bin{border:2px dashed var(--ink);border-radius:18px;padding:10px;min-height:180px;background:#fff}
+.bin h3{margin:0 0 6px;font-size:16px}
+.msg{background:#fff;border:2px solid var(--ink);border-radius:14px;padding:8px 10px;margin-bottom:8px;font-size:13px}
+.msg b{display:block}
+.msg.fly{animation:fly .5s ease-out}
+@keyframes fly{from{transform:translateY(-30px) scale(.8);opacity:0}}
+
+/* ---------- Lego ---------- */
+.brick{display:inline-flex;align-items:center;gap:6px;border:2px solid var(--ink);border-radius:10px;padding:5px 10px;margin:4px;font-weight:800;font-size:13px;box-shadow:0 3px 0 var(--ink);position:relative}
+.brick::before{content:'';position:absolute;top:-7px;left:12px;width:10px;height:6px;border:2px solid var(--ink);border-bottom:none;border-radius:4px 4px 0 0;background:inherit}
+.brick.f{background:var(--sky2)}.brick.f.sens{background:var(--grape2)}.brick.a{background:var(--mint2)}.brick.c{background:var(--sun)}
+.brick button{border:none;background:none;padding:0 2px;font-size:13px}
+.arrow{font-weight:800;color:var(--muted)}
+
+/* ---------- misc ---------- */
+.modal{position:fixed;inset:0;background:rgba(58,46,57,.45);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal.hidden{display:none}
+.mbox{background:#fff;border:3px solid var(--ink);border-radius:26px;padding:22px;max-width:640px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 8px 0 var(--ink)}
+.pair{display:flex;align-items:center;gap:10px;margin:14px 0}
+.mcard{flex:1;border:2px solid var(--ink);border-radius:18px;padding:12px;background:var(--pink2)}
+.mcard b{display:block;font-family:'Baloo 2';font-size:18px}
+.heart{font-family:'Baloo 2';font-size:22px;background:var(--red);color:#fff;width:74px;height:74px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:3px solid var(--ink);animation:pulse 1s infinite}
+.term{background:#2b2230;color:#a8ffcf;border-radius:14px;padding:10px 12px;font-size:13px;min-height:110px;white-space:pre-wrap}
+.json{background:#f8f2f5;border-radius:14px;padding:10px 12px;font-size:12px;max-height:220px;overflow:auto}
+#toasts{position:fixed;right:16px;bottom:16px;z-index:60;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.toast{background:#fff;border:2px solid var(--ink);border-radius:16px;padding:9px 14px;font-weight:700;box-shadow:0 4px 0 var(--ink);max-width:380px;animation:fly .3s}
+.notes{position:fixed;right:16px;top:64px;z-index:40;width:380px;max-height:70vh;overflow:auto;background:#fff;border:2px solid var(--ink);border-radius:20px;padding:12px;box-shadow:var(--shadow)}
+.notes.hidden{display:none}
+.notes div{font-size:13px;padding:6px 0;border-bottom:1.5px dashed var(--line)}
+.confetti{position:fixed;top:-40px;z-index:70;font-size:26px;pointer-events:none;animation:fall 1.8s linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+.seasbar{display:flex;align-items:flex-end;gap:4px;height:90px}
+.seasbar div{flex:1;background:var(--pink2);border:1.5px solid var(--ink);border-radius:6px 6px 0 0;text-align:center;font-size:10px;font-weight:800}
+svg text{font-family:Nunito,sans-serif}
+@media (max-width:900px){.grid2,.grid3,.garden,.bins,.kpis{grid-template-columns:1fr 1fr}.hbar{width:120px}}
+@media (max-width:600px){.grid2,.grid3,.garden,.bins,.kpis{grid-template-columns:1fr}.hp{display:none}main,header,nav{padding-left:16px;padding-right:16px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><span id="miniSappy"></span><div><b>Sappy</b><small>Lives Group · your Master Data Pet</small></div></div>
+  <div class="hp"><div class="hbar sm"><i id="hpbar"></i></div><span id="hptxt"></span></div>
+  <div class="spacer"></div>
+  <button class="btn xs" onclick="openGuide()">❓ Guide</button>
+  <button class="btn xs pink" onclick="startTour()">🎬 Demo tour</button>
+  <label class="role"><small>I am</small> <select id="roleSel" onchange="setMe(this.value)"></select></label>
+  <button class="bell" onclick="toggleNotes()" title="Teams notifications">🔔<span id="bellN"></span></button>
+</header>
+<nav id="tabs"></nav>
+<main id="main"></main>
+<div id="notes" class="notes hidden"></div>
+<div id="toasts"></div>
+<div id="modal" class="modal hidden" onclick="if(event.target===this)closeModal()"><div class="mbox" id="mbox"></div></div>
+
+<script>
+const E = window.ENGINE;
+const { NOW, HOUR, DAY, NH, MONTHS, COUNTRIES, PRODUCTS, DUPS, ORDERS, INBOX_COUNTS, INBOX, CLASSES, sum } = E;
+const MASTER = E.MASTER.slice();
+let clock = NOW;
+const tick = () => (clock += 9 * 60e3);
+
+const PEOPLE = {
+  amy:    { name: 'Amy',     role: 'Requestor',        title: 'Product Manager · SPD',        emoji: '👩‍🔬' },
+  marcus: { name: 'Marcus',  role: 'Requestor',        title: 'Regional Sales · QTG (new BU)', emoji: '🧑‍💼' },
+  daniel: { name: 'Daniel',  role: 'BU Head',          title: 'Business Unit Head',           emoji: '🧔' },
+  weijie: { name: 'Wei Jie', role: 'Finance',          title: 'Finance Manager',              emoji: '🧮' },
+  nurul:  { name: 'Nurul',   role: 'QA/RA',            title: 'Quality & Regulatory Affairs', emoji: '🧪' },
+  siti:   { name: 'Siti',    role: 'Business Support', title: 'Business Support',             emoji: '📋' },
+  priya:  { name: 'Priya',   role: 'MDM',              title: 'MDM Analyst',                  emoji: '🛠️' },
+};
+const ROLE_OWNER = { 'BU Head': 'daniel', 'Finance': 'weijie', 'QA/RA': 'nurul', 'Business Support': 'siti', 'MDM': 'priya' };
+const SEE_SENSITIVE = ['Finance', 'MDM'];
+let ENTITIES = ['SPD', 'QTS', 'QTG'];
+
+// The whole request process is data, not code: the MDM team edits this in "Rule Lego".
+const RULES = {
+  Customer: { icon: '🏥', fields: [
+    { k: 'name', label: 'Customer name', req: 1, dup: 1, ph: 'e.g. Tam Anh General Hospital' },
+    { k: 'address', label: 'Billing address', req: 1 },
+    { k: 'taxno', label: 'Tax / registration no.', req: 1 },
+    { k: 'email', label: 'Accounts payable email', type: 'email', req: 1 },
+    { k: 'credit', label: 'Credit terms', type: 'select', options: ['COD', '30 days', '45 days', '60 days', '90 days'], req: 1, sens: 1 },
+  ], chain: ['BU Head', 'Finance', 'MDM'], cond: [] },
+  Vendor: { icon: '🚚', fields: [
+    { k: 'name', label: 'Vendor name', req: 1, dup: 1, ph: 'e.g. BioNova Reagents' },
+    { k: 'taxno', label: 'Tax / registration no.', req: 1 },
+    { k: 'bank', label: 'Bank name', req: 1 },
+    { k: 'acct', label: 'Bank account no.', req: 1, sens: 1 },
+    { k: 'swift', label: 'SWIFT code', req: 1, sens: 1 },
+    { k: 'payterms', label: 'Payment terms', type: 'select', options: ['30 days', '45 days', '60 days'], req: 1, sens: 1 },
+  ], chain: ['BU Head', 'Finance', 'Business Support', 'MDM'], cond: [] },
+  Item: { icon: '🧪', fields: [
+    { k: 'name', label: 'Item description', req: 1, dup: 1, ph: 'e.g. Product A — Dengue NS1 Rapid Test 25T' },
+    { k: 'line', label: 'Product line', type: 'select', options: ['Product A — IVD reagents', 'Product B — Analyzer consumables', 'Product C — Lab equipment & service'], req: 1 },
+    { k: 'uom', label: 'Unit of measure', type: 'select', options: ['Kit', 'Box', 'Each', 'Carton'], req: 1 },
+    { k: 'ivd', label: 'Is it an IVD / medical device?', type: 'select', options: ['Yes', 'No'], req: 1 },
+    { k: 'licence', label: 'Regulatory licence no.', req: 1, showIf: { k: 'ivd', v: 'Yes' }, ph: 'e.g. HSA-IVD-26-0912' },
+    { k: 'storage', label: 'Storage condition', type: 'select', options: ['Ambient', '2–8 °C', '−20 °C'], req: 1 },
+    { k: 'supplier', label: 'Supplier', req: 1 },
+  ], chain: ['BU Head', 'Business Support', 'MDM'], cond: [{ k: 'ivd', v: 'Yes', add: 'QA/RA', after: 'BU Head' }] },
+  'Cost Center': { icon: '💰', fields: [
+    { k: 'name', label: 'Cost center name', req: 1, dup: 1 },
+    { k: 'owner', label: 'Owner', req: 1 },
+    { k: 'budget', label: 'Budget code', req: 1 },
+  ], chain: ['Finance', 'MDM'], cond: [] },
+};
+function chainFor(type, f) {
+  const r = RULES[type], c = r.chain.slice();
+  (r.cond || []).forEach(x => { if (f[x.k] === x.v && !c.includes(x.add)) c.splice(Math.max(0, c.indexOf(x.after) + 1), 0, x.add); });
+  return c;
+}
+
+// ---------- tamper-evident diary (hash chain) ----------
+const DIARY = [];
+function cyrb53(str) { let h1 = 0xdeadbeef, h2 = 0x41c6ce57; for (let i = 0; i < str.length; i++) { const ch = str.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); } h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909); h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909); return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(16).padStart(14, '0'); }
+const sealOf = (prev, e) => cyrb53(prev + '|' + e.t + '|' + e.who + '|' + e.text);
+function diary(who, text, t = clock) { const prev = DIARY.length ? DIARY[DIARY.length - 1].hash : 'GENESIS'; const e = { t, who, text, prev }; e.hash = sealOf(prev, e); DIARY.push(e); }
+function verifyDiary() { let prev = 'GENESIS'; for (let i = 0; i < DIARY.length; i++) { const e = DIARY[i]; if (e.prev !== prev || sealOf(prev, e) !== e.hash) return i; prev = e.hash; } return -1; }
+
+// ---------- seed requests ----------
+const REQS = [], seedEvents = [];
+function seed(id, type, requester, entity, country, fields, daysAgo, gaps, live) {
+  const t0 = NOW - daysAgo * DAY, chain = chainFor(type, fields);
+  const r = { id, type, requester, entity, country, fields, created: t0, steps: chain.map(role => ({ role, who: ROLE_OWNER[role], status: 'todo', at: null, since: null })), cur: 0, status: 'Pending', sap: null };
+  seedEvents.push({ t: t0, who: PEOPLE[requester].name, text: `submitted ${id} · new ${type} “${fields.name}”` });
+  let t = t0;
+  gaps.forEach((g, i) => { t += g * DAY; r.steps[i].status = 'done'; r.steps[i].at = t; seedEvents.push({ t, who: PEOPLE[r.steps[i].who].name, text: `approved ${id} as ${r.steps[i].role}` }); });
+  r.cur = gaps.length;
+  if (r.cur < r.steps.length) { r.steps[r.cur].status = 'waiting'; r.steps[r.cur].since = t; }
+  if (live) { r.status = 'Live'; r.sap = live; seedEvents.push({ t: t + 60e3, who: 'Priya', text: `created ${live} in SAP B1 from ${id} via Service Layer` }); }
+  REQS.unshift(r);
+}
+seed('MDM-0147', 'Cost Center', 'siti', 'QTS', 'VN', { name: 'QTS Vietnam Field Service', owner: 'Marcus', budget: 'BC-QTS-VN-07' }, 6, [0.4, 0.3], 'CC-QTS-0071');
+seed('MDM-0149', 'Customer', 'amy', 'SPD', 'MY', { name: 'KPJ Damansara Specialist Hospital', address: '119 Jalan SS20/10, Petaling Jaya', taxno: 'MY-200301009876', email: 'ap@kpjdamansara.example', credit: '45 days' }, 1.2, [0.3, 0.4]);
+seed('MDM-0151', 'Item', 'amy', 'SPD', 'SG', { name: 'Product A — Lyme IgG Reagent Kit 96T', line: 'Product A — IVD reagents', uom: 'Kit', ivd: 'Yes', licence: 'HSA-IVD-26-0912', storage: '2–8 °C', supplier: 'BioNova Reagents Pte Ltd' }, 4.2, [0.3]);
+seed('MDM-0152', 'Vendor', 'marcus', 'QTG', 'VN', { name: 'Mekong Cold Chain Co., Ltd', taxno: '0312345678', bank: 'Vietcombank', acct: '0071000654821', swift: 'BFTVVNVX', payterms: '45 days' }, 2.6, [0.2]);
+seed('MDM-0153', 'Customer', 'marcus', 'QTG', 'VN', { name: 'Tam Anh General Hospital', address: '2B Pho Quang, Tan Binh, HCMC', taxno: '0309876543', email: 'ketoan@tamanh.example', credit: '30 days' }, 0.3, []);
+seedEvents.sort((a, b) => a.t - b.t).forEach(e => diary(e.who, e.text, e.t));
+
+// ---------- app state ----------
+const S = { tab: 'home', me: 'amy', feedType: 'Item', draft: {}, missing: new Set(), resolvedDup: null, merged: new Set(), peeked: new Set(),
+  party: 0, anim: null, bubble: null, bubbleCls: '', dupsBlocked: 0, approvals: {}, nextId: 154, codeN: 410, notes: [], unread: 0,
+  sorted: null, cbC: 'ALL', cbP: 'ALL', gardenC: 'SG', mineOnly: false, legoType: 'Item', tamper: null };
+
+// ---------- helpers ----------
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt = n => Math.round(n).toLocaleString('en');
+const pct = x => x == null ? '—' : (x >= 0 ? '+' : '') + (x * 100).toFixed(1) + '%';
+const flag = cc => (COUNTRIES.find(c => c.c === cc) || {}).f || '';
+const cname = cc => (COUNTRIES.find(c => c.c === cc) || {}).n || cc;
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+function ago(t, to = clock) { const h = (to - t) / HOUR; return h < 1 ? Math.max(1, Math.round(h * 60)) + ' min' : h < 48 ? Math.round(h) + ' h' : (h / 24).toFixed(1) + ' days'; }
+const overdue = r => r.status === 'Pending' && r.steps[r.cur] && clock - r.steps[r.cur].since > 48 * HOUR;
+const labelOf = (type, k) => ((RULES[type]?.fields || []).find(f => f.k === k) || {}).label || k;
+const isSens = (type, k) => !!((RULES[type]?.fields || []).find(f => f.k === k) || {}).sens;
+
+function health() {
+  let h = 100;
+  h -= REQS.filter(overdue).length * 15;
+  h -= MASTER.filter(m => m.dupOf && !S.merged.has(m.code)).length * 10;
+  h -= REQS.filter(r => r.status === 'Pending').length * 3;
+  return Math.max(5, Math.min(100, h));
+}
+function mood(h = health()) { if (Date.now() < S.party) return 'happy'; return h >= 80 ? 'happy' : h >= 60 ? 'ok' : h >= 40 ? 'sad' : 'sick'; }
+const MOODTXT = { happy: 'Sappy is thriving! 🌈', ok: 'Sappy is… fine. 😐', sad: 'Sappy is sad 🥺', sick: 'Sappy is sick 🤒' };
+function sappy(m, size = 160, hat = '', extra = '') {
+  return `<div class="sappy ${m} ${extra}" style="--s:${size}px">${hat ? `<div class="hat">${hat}</div>` : ''}<div class="body"><div class="eye l"></div><div class="eye r"></div><div class="blush l"></div><div class="blush r"></div><div class="mouth"></div><div class="tear"></div><div class="sweat">💦</div></div><div class="shadow"></div></div>`;
+}
+
+function toast(html, ms = 3200) { const d = document.createElement('div'); d.className = 'toast'; d.innerHTML = html; $('#toasts').appendChild(d); setTimeout(() => d.remove(), ms); }
+function note(html) { S.notes.unshift({ t: clock, html }); S.unread++; toast(html); }
+function toggleNotes() { const n = $('#notes'); n.classList.toggle('hidden'); S.unread = 0; n.innerHTML = '<h3>🔔 Teams notifications</h3>' + (S.notes.map(x => `<div>${x.html}<br><small>${new Date(x.t).toLocaleString('en-SG')}</small></div>`).join('') || '<small>Nothing yet</small>'); renderHeader(); }
+function confetti(e = '🎉') { for (let i = 0; i < 26; i++) { const s = document.createElement('span'); s.className = 'confetti'; s.textContent = [e, '✨', '💖', '🌸'][i % 4]; s.style.left = Math.random() * 100 + 'vw'; s.style.animationDelay = Math.random() * .6 + 's'; document.body.appendChild(s); setTimeout(() => s.remove(), 2600); } }
+function modal(html) { $('#mbox').innerHTML = html; $('#modal').classList.remove('hidden'); }
+function closeModal() { $('#modal').classList.add('hidden'); render(); }
+function ask(title, ph) {
+  return new Promise(res => {
+    modal(`<h2>${title}</h2><textarea id="askT" rows="3" placeholder="${esc(ph)}"></textarea><div class="row" style="margin-top:10px"><button class="btn pink" id="askOk">Send</button><button class="btn ghost" id="askNo">Cancel</button></div>`);
+    $('#askT').focus();
+    $('#askOk').onclick = () => { const v = $('#askT').value.trim(); if (!v) { $('#askT').style.borderColor = 'var(--red)'; return; } $('#modal').classList.add('hidden'); res(v); };
+    $('#askNo').onclick = () => { $('#modal').classList.add('hidden'); res(null); };
+  });
+}
+
+// ---------- tabs ----------
+const TABS = [['home', '🏠', "Sappy's Room"], ['feed', '🍼', 'Feed Sappy'], ['swipe', '👉', 'Swipe Approvals'], ['track', '📦', 'Track & Diary'],
+  ['garden', '🌱', "Sappy's Garden"], ['crystal', '🔮', 'Crystal Ball'], ['sorter', '📮', 'Inbox Sorter'], ['lego', '🧩', 'Rule Lego'], ['board', '🏆', 'Leaderboard'], ['hood', '⚙️', 'Under the Hood']];
+function go(t) { S.tab = t; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+function setMe(k) { S.me = k; S.bubble = null; render(); toast(`${PEOPLE[k].emoji} You are now <b>${PEOPLE[k].name}</b> · ${PEOPLE[k].role}`); }
+
+function renderHeader() {
+  const h = health();
+  $('#miniSappy').innerHTML = sappy(mood(h), 42);
+  $('#hpbar').style.width = h + '%';
+  $('#hptxt').textContent = h + '/100 data health';
+  $('#roleSel').innerHTML = Object.entries(PEOPLE).map(([k, p]) => `<option value="${k}" ${k === S.me ? 'selected' : ''}>${p.emoji} ${p.name} · ${p.role}</option>`).join('');
+  $('#bellN').textContent = S.unread || '';
+  const btn = ([k, i, l]) => {
+    let badge = '';
+    if (k === 'swipe') { const role = PEOPLE[S.me].role, n = REQS.filter(r => r.status === 'Pending' && r.steps[r.cur]?.role === role).length; if (n) badge = ` (${n})`; }
+    return `<button class="${S.tab === k ? 'on' : ''}" onclick="go('${k}')">${i} ${l}${badge}</button>`;
+  };
+  const active = NAV_GROUPS.find(g => g[2].includes(S.tab));
+  $('#tabs').innerHTML = `<div class="sections">${NAV_GROUPS.map(g => `<button class="${g === active ? 'on' : ''}" onclick="go('${g[2][0]}')">${g[0]} ${g[1]}</button>`).join('')}</div>
+    <div class="subtabs">${active[2].map(k => btn(TABS.find(t => t[0] === k))).join('')}</div>`;
+  renderTour();
+}
+const NAV_GROUPS = [['🐣', 'MDM Workflow', ['home', 'feed', 'swipe', 'track']], ['🌏', 'Regional Insights', ['garden', 'crystal', 'sorter']], ['🛠️', 'Setup & Rollout', ['lego', 'board', 'hood']]];
+
+// ---------- in-app guide & demo tour ----------
+function openGuide() {
+  modal(`<div class="guide"><h2>❓ How to use Sappy</h2>
+  <p>Sappy is a clickable prototype. Nothing is saved, and <b>refreshing the page resets everything</b> (handy before recording).</p>
+  <h3>1 · Pick who you are</h3><p>Use the <b>“I am”</b> menu (top right) to switch between people. Requestors (Amy, Marcus) submit; approvers (Daniel, Wei Jie, Nurul, Siti) swipe; Priya (MDM) does the final push to SAP B1. Only Finance and MDM can unmask bank details.</p>
+  <h3>2 · MDM workflow</h3><ul>
+    <li><b>🏠 Sappy's Room</b>: data health score, the reasons behind it, and duplicates to merge.</li>
+    <li><b>🍼 Feed Sappy</b>: submit a request. Try <i>Item → IVD = Yes</i> (an extra field and QA/RA step appear) or <i>✨ Demo-fill</i> (it triggers the duplicate match).</li>
+    <li><b>👉 Swipe Approvals</b>: drag the card right to approve or left to send back (or use the buttons). As Priya, 🚀 creates the SAP B1 record.</li>
+    <li><b>📦 Track & Diary</b>: where each request is, plus the tamper-proof audit log (try 😈 then 🔍).</li></ul>
+  <h3>3 · Regional insights</h3><ul>
+    <li><b>🌱 Garden</b>: 5 countries × Products A/B/C. Click a country plot for customer details and recommended actions.</li>
+    <li><b>🔮 Crystal Ball</b>: today's 6-month average vs Sappy's forecast. Change country and product at the top.</li>
+    <li><b>📮 Inbox Sorter</b>: separates purchase orders from enquiries, follow-ups and setup requests. Type your own message too.</li></ul>
+  <h3>4 · Setup & rollout</h3><ul>
+    <li><b>🧩 Rule Lego</b>: add fields, approval steps, business units or a new domain, with no IT needed.</li>
+    <li><b>🏆 Leaderboard</b> and <b>⚙️ Under the Hood</b>: adoption, architecture, cost, and what's not in v1.</li></ul>
+  <div class="note">🎬 First time? Press <b>Demo tour</b> in the header: it walks through the full story step by step and switches tabs and roles for you.</div>
+  <div class="row"><button class="btn pink" onclick="$('#modal').classList.add('hidden');startTour()">🎬 Start demo tour</button><button class="btn ghost" onclick="closeModal()">Close</button></div></div>`);
+}
+const TOUR = [
+  { tab: 'home', me: 'amy', t: '1 · Meet Sappy', d: 'Sappy is sick 🤒: two approvals have been stuck for days and three duplicate records live in SAP B1. Its health = the health of the master data.' },
+  { tab: 'feed', me: 'amy', t: '2 · Amy needs an item code', d: 'Item is selected. Set <b>“Is it an IVD?” = Yes</b>: the licence field and QA/RA step appear automatically. Then click <b>🍼 Feed</b> with blanks to watch Sappy spit it out.', go: () => { S.feedType = 'Item'; S.draft = {}; } },
+  { tab: 'feed', me: 'marcus', t: '3 · A duplicate is caught', d: 'Marcus adds a customer. Click <b>✨ Demo-fill</b>, then <b>🍼 Feed Sappy</b> → <i>It\'s a Match!</i> → <b>💍 Use existing record</b>.', go: () => { S.feedType = 'Customer'; S.draft = {}; } },
+  { tab: 'swipe', me: 'nurul', t: '4 · Swipe to approve', d: 'Nurul (QA/RA) gets the request as a Teams card. <b>Drag it right</b> (or tap ✔). Sappy pings the next approver.' },
+  { tab: 'swipe', me: 'siti', t: '5 · Next approver', d: 'Siti (Business Support) swipes right on the Lyme kit.' },
+  { tab: 'swipe', me: 'priya', t: '6 · One click to SAP B1', d: 'Priya does the final check. Tap <b>🚀</b> to push the top request into SAP B1 via the Service Layer, then 🚀 again for Amy\'s Lyme kit. No re-keying.' },
+  { tab: 'track', me: 'amy', t: '7 · Track & audit', d: 'Amy sees her item is live. In the Diary click <b>😈 Try to tamper</b>, then <b>🔍 Verify diary</b>.' },
+  { tab: 'lego', me: 'priya', t: '8 · Change the process without IT', d: 'Add an approval step, or create a new domain such as “Clinical Trial Site”.' },
+  { tab: 'garden', t: '9 · Regional view', d: 'Vietnam is booming (+35% YoY). But look at the Singapore plot: <b>National University Hospital looks like it\'s wilting</b>…', go: () => { S.gardenC = 'SG'; } },
+  { tab: 'home', t: '10 · Merge the twins', d: 'Click <b>💍 Merge</b> on each suspected twin. Watch Sappy recover.' },
+  { tab: 'garden', t: '11 · The truth', d: 'NUH is healthy again: the “churn” was a data problem. Scroll to <b>Recommended actions</b>.', go: () => { S.gardenC = 'SG'; } },
+  { tab: 'crystal', t: '12 · Better forecasting', d: 'Grandma\'s 6-month average is off by 12.6%; Sappy is off by 4.6%, and it sees the December peak.', go: () => { S.cbC = 'ALL'; S.cbP = 'ALL'; } },
+  { tab: 'sorter', t: '13 · Only real orders count', d: 'Click <b>🪄 Let Sappy sort</b> to separate POs from enquiries, follow-ups and setup requests.' },
+  { tab: 'hood', t: '14 · How it plugs into SAP B1', d: 'Microsoft 365 + SAP B1 Service Layer, ~10 weeks, ~S$20–25k, and what\'s deliberately not in v1. 🎉 End of tour!' },
+];
+let tourI = -1;
+function startTour() { tourI = 0; tourStep(); }
+function tourStep() { const s = TOUR[tourI]; if (s.go) s.go(); if (s.me) S.me = s.me; S.bubble = null; S.tab = s.tab; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+function tourMove(d) { tourI = Math.max(0, Math.min(TOUR.length - 1, tourI + d)); tourStep(); }
+function endTour() { tourI = -1; renderTour(); }
+function renderTour() {
+  let el = $('#tour'); if (tourI < 0) { if (el) el.remove(); return; }
+  if (!el) { el = document.createElement('div'); el.id = 'tour'; el.className = 'tour'; document.body.appendChild(el); }
+  const s = TOUR[tourI];
+  el.innerHTML = `<div class="bar"><i style="width:${(tourI + 1) / TOUR.length * 100}%"></i></div><small>🎬 Demo tour · step ${tourI + 1} of ${TOUR.length}${s.me ? ` · you are ${PEOPLE[s.me].emoji} ${PEOPLE[s.me].name}` : ''}</small><h3>${s.t}</h3><p>${s.d}</p>
+    <div class="row"><button class="btn xs" onclick="tourMove(-1)" ${tourI ? '' : 'disabled'}>← Back</button>${tourI < TOUR.length - 1 ? '<button class="btn xs pink" onclick="tourMove(1)">Next →</button>' : '<button class="btn xs mint" onclick="endTour()">Finish 🎉</button>'}<button class="btn xs ghost" onclick="endTour()">✕ Hide</button></div>`;
+}
+let charts = [];
+function render() {
+  renderHeader();
+  charts.forEach(c => c.destroy()); charts = [];
+  $('#main').innerHTML = VIEWS[S.tab]();
+  (AFTER[S.tab] || (() => {}))();
+  if (S.anim) { const el = document.querySelector('#feedSappy .sappy, #homeSappy .sappy'); if (el) { el.classList.add(S.anim); setTimeout(() => el.classList.remove(S.anim), 1500); } S.anim = null; }
+}
+
+// =============== VIEWS ===============
+const VIEWS = {}, AFTER = {};
+
+// ---------- Home ----------
+VIEWS.home = () => {
+  const h = health(), m = mood(h), od = REQS.filter(overdue), twins = MASTER.filter(x => x.dupOf && !S.merged.has(x.code)), pend = REQS.filter(r => r.status === 'Pending');
+  const reasons = [
+    ...od.map(r => `<li>⏰ <b>${r.id}</b> has waited <b>${ago(r.steps[r.cur].since)}</b> for ${PEOPLE[r.steps[r.cur].who].name} (${r.steps[r.cur].role}) <span class="pill red">−15</span> <button class="btn xs" onclick="nudge('${r.id}')">Nudge in Teams</button></li>`),
+    ...twins.map(t => `<li>👯 Evil twin in SAP B1: “${esc(t.name)}” <span class="pill red">−10</span></li>`),
+    pend.length ? `<li>🍽️ ${pend.length} requests still digesting <span class="pill sun">−${pend.length * 3}</span></li>` : '',
+  ].join('');
+  return `
+  <div class="grid2">
+    <div class="card center" id="homeSappy">
+      ${sappy(m, 210, Date.now() < S.party ? '🎉' : '')}
+      <h2>${MOODTXT[m]}</h2>
+      <div class="row" style="justify-content:center"><div class="hbar"><i style="width:${h}%"></i></div><b>${h}/100</b></div>
+      <p class="muted" style="max-width:460px;margin:10px auto 0">Sappy is Lives Group's Master Data Pet. Its health <b>is</b> the health of your SAP B1 master data: stuck approvals make it hungry, duplicates make it sick, clean data makes it bloom. Nobody wants to be the one who starved Sappy.</p>
+    </div>
+    <div class="card">
+      <h3>Why Sappy feels like this</h3>
+      <ul>${reasons || '<li>🌈 Nothing! Every request is moving and the data is clean.</li>'}</ul>
+      <h3>👯 Suspected twins already in SAP B1</h3>
+      ${twins.length ? twins.map(t => { const g = MASTER.find(x => x.code === t.dupOf); return `<div class="note red"><b>${esc(t.name)}</b> <small>${t.code} · ${t.entity}</small> looks like <b>${esc(g.name)}</b> <small>${g.code} · ${g.entity}</small> — ${Math.round(E.similarity(t.name, g.name) * 100)}% match<br><button class="btn xs mint" onclick="mergeTwin('${t.code}')">💍 Merge into golden record</button></div>`; }).join('') : '<div class="note mint">No twins left. Sappy found and merged them all 🥹</div>'}
+    </div>
+  </div>
+  <div class="kpis">
+    <div class="kpi"><small>Open requests</small><b>${pend.length}</b><small>${od.length} overdue (&gt;48 h)</small></div>
+    <div class="kpi"><small>Request → live in SAP B1</small><b>~3 days</b><small>was 18 days by email (Appendix C)</small></div>
+    <div class="kpi"><small>Duplicates blocked at intake</small><b>${7 + S.dupsBlocked}</b><small>this month (7 = pilot assumption)</small></div>
+    <div class="kpi"><small>Forecast error (back-test)</small><b>${(E.backtest().ws * 100).toFixed(1)}%</b><small>vs ${(E.backtest().wb * 100).toFixed(1)}% today's 6-month average</small></div>
+  </div>
+  <div class="card"><h3>🗺️ Quick tour</h3><div class="row">
+    <button class="btn pink" onclick="go('feed')">🍼 Feed a request</button><button class="btn sun" onclick="setMe('nurul');go('swipe')">👉 Approve like Nurul</button>
+    <button class="btn sky" onclick="go('track')">📦 Track it</button><button class="btn mint" onclick="go('garden')">🌱 Regional garden</button><button class="btn ghost" onclick="go('crystal')">🔮 Forecast</button></div>
+    <p class="assume">All customer, order and request data in this prototype is synthetic and seeded for reproducibility. "Today" is fixed at 27 Oct 2026.</p></div>`;
+};
+function mergeTwin(code) {
+  const t = MASTER.find(x => x.code === code); S.merged.add(code);
+  diary(PEOPLE[S.me].name, `merged duplicate ${code} “${t.name}” into golden record ${t.dupOf}; ${t.code} blocked for new transactions`);
+  note(`💍 ${esc(t.name)} merged into ${t.dupOf}. Order history re-attributed.`); S.party = Date.now() + 2500; confetti('💍'); render();
+}
+function nudge(id) {
+  const r = REQS.find(x => x.id === id), s = r.steps[r.cur];
+  diary('Sappy', `sent reminder for ${id} to ${PEOPLE[s.who].name} (${s.role}) after ${ago(s.since)}`);
+  note(`⏰ Teams nudge to <b>${PEOPLE[s.who].name}</b>: “Sappy is hungry 🥺 ${id} has waited ${ago(s.since)}. Swipe now?” · auto-escalates to their manager at 72 h`);
+}
+
+// ---------- Feed ----------
+function visibleFields() {
+  const base = [{ k: 'entity', label: 'Business entity', type: 'select', options: ENTITIES, req: 1 }, { k: 'country', label: 'Country', type: 'select', options: COUNTRIES.map(c => c.n), req: 1 }];
+  return base.concat(RULES[S.feedType].fields.filter(f => !f.showIf || S.draft[f.showIf.k] === f.showIf.v));
+}
+function fieldHTML(fd) {
+  const v = esc(S.draft[fd.k] || ''), err = S.missing.has(fd.k) ? 'err' : '';
+  const lab = `<label>${esc(fd.label)}${fd.req ? ' <i class="req">*</i>' : ''}${fd.sens ? '<span class="lock">🔒 encrypted · Finance & MDM only</span>' : ''}${fd.dup ? '<span class="tag">👀 twin-checked</span>' : ''}${fd.showIf ? '<span class="tag" style="background:var(--sun2);color:#9a6a00">appears because ' + esc(fd.showIf.k.toUpperCase()) + ' = ' + esc(fd.showIf.v) + '</span>' : ''}</label>`;
+  if (fd.type === 'select') return `<div class="field ${err}">${lab}<select onchange="setF('${fd.k}',this.value,1)"><option value="">— choose —</option>${fd.options.map(o => `<option ${o === S.draft[fd.k] ? 'selected' : ''}>${esc(o)}</option>`).join('')}</select></div>`;
+  return `<div class="field ${err}">${lab}<input ${fd.sens ? 'type="password" autocomplete="off"' : fd.type === 'email' ? 'type="email"' : ''} value="${v}" placeholder="${esc(fd.ph || '')}" oninput="setF('${fd.k}',this.value,0,${fd.dup ? 1 : 0})"></div>`;
+}
+function routeHTML() {
+  const base = RULES[S.feedType].chain, c = chainFor(S.feedType, S.draft);
+  return `🧭 Sappy will route to: ${c.map(r => `<span class="step ${base.includes(r) ? '' : 'cond'}">${r}</span>`).join(' → ')} → <span class="step">📦 SAP B1</span>${c.length > base.length ? '<br><small>Yellow step added automatically by a rule — Amy no longer has to guess whether Regulatory needs to sign off.</small>' : ''}`;
+}
+VIEWS.feed = () => {
+  const t = S.feedType, types = Object.keys(RULES).map(k => `<button class="pick ${k === t ? 'on' : ''}" onclick="setType('${esc(k)}')">${RULES[k].icon}<span>${esc(k)}</span></button>`).join('');
+  return `<div class="grid2">
+    <div class="card"><h2>🍼 Feed Sappy a new request</h2>
+      <p class="muted">Pick what you need. Sappy only asks for the fields that matter for <i>this</i> request type, so nobody copies last month's email any more.</p>
+      <div class="picks">${types}</div>
+      <form onsubmit="submitFeed(event)" novalidate>${visibleFields().map(fieldHTML).join('')}
+      <div class="route">${routeHTML()}</div>
+      <button class="btn big pink" type="submit">🍼 Feed Sappy</button>
+      <button class="btn ghost" type="button" onclick="demoFill()">✨ Demo-fill (a near-duplicate!)</button></form>
+    </div>
+    <div class="card center sticky"><div id="feedSappy">${sappy(mood(), 190)}</div>
+      <div class="bubble ${S.bubbleCls}" id="bubble">${S.bubble || `Hi ${PEOPLE[S.me].name}! I'm hungry for a <b>${esc(t)}</b> request 😋`}</div>
+      <div class="hint" id="dupHint"></div>
+      <p class="assume" style="margin-top:14px">Requesting as ${PEOPLE[S.me].emoji} ${PEOPLE[S.me].name} (${PEOPLE[S.me].title}). Switch role at the top right.</p></div></div>`;
+};
+AFTER.feed = () => updateDupHint();
+function setType(k) { S.feedType = k; S.draft = {}; S.missing.clear(); S.bubble = null; S.bubbleCls = ''; render(); }
+function setF(k, v, rerender, dup) { S.draft[k] = v; S.missing.delete(k); if (dup) { S.resolvedDup = null; updateDupHint(); } if (rerender) render(); }
+function demoFill() {
+  const d = { Customer: { name: 'Natl Univ Hosp', entity: 'QTS', country: 'Singapore' }, Vendor: { name: 'Bionova Reagents', entity: 'SPD', country: 'Singapore' }, Item: { name: 'HbA1c Reagent Kit 100 tests', entity: 'SPD', country: 'Singapore', ivd: 'Yes' }, 'Cost Center': { name: 'QTS Vietnam Field Service', entity: 'QTS', country: 'Vietnam' } };
+  S.draft = { ...(d[S.feedType] || { name: 'Demo', entity: 'SPD', country: 'Singapore' }) }; render();
+}
+function bestMatch(name, type) {
+  if (!name || name.length < 4) return null;
+  const pool = MASTER.filter(x => x.type === type && !(x.dupOf && S.merged.has(x.code))).map(x => ({ ...x, pending: false }))
+    .concat(REQS.filter(r => r.type === type && r.status === 'Pending').map(r => ({ code: r.id, name: r.fields.name, entity: r.entity, country: r.country, pending: true })));
+  let best = null; pool.forEach(x => { const s = E.similarity(name, x.name); if (!best || s > best.score) best = { ...x, score: s }; });
+  return best;
+}
+function updateDupHint() {
+  const el = $('#dupHint'); if (!el) return; const m = bestMatch(S.draft.name, S.feedType);
+  if (!m || m.score < 0.55) { el.className = 'hint'; return; }
+  el.className = 'hint show' + (m.score >= 0.75 ? ' hot' : '');
+  el.innerHTML = `👀 Sappy smells a twin… <b>${esc(m.name)}</b> <small>(${m.code} · ${m.entity} · ${flag(m.country)}${m.pending ? ' · already requested, in flight' : ' · already in SAP B1'})</small> — <b>${Math.round(m.score * 100)}%</b> similar`;
+}
+function submitFeed(e) {
+  if (e) e.preventDefault();
+  const vis = visibleFields(), miss = vis.filter(f => f.req && !String(S.draft[f.k] || '').trim());
+  if (S.draft.email && !/.+@.+\..+/.test(S.draft.email) && vis.some(f => f.k === 'email')) miss.push({ k: 'email', label: 'a valid email' });
+  if (miss.length) {
+    S.missing = new Set(miss.map(f => f.k)); S.anim = 'spit'; S.bubbleCls = 'bad';
+    S.bubble = `Bleh! 🤢 I can't digest this without:<br>• ${miss.map(f => esc(f.label)).join('<br>• ')}<br><small>It never reaches an approver half-done.</small>`;
+    render(); return;
+  }
+  const m = bestMatch(S.draft.name, S.feedType);
+  if (m && m.score >= 0.75 && S.resolvedDup !== E.norm(S.draft.name)) return openMatch(m);
+  createRequest();
+}
+function openMatch(m) {
+  modal(`<div class="center"><h2>💕 It's a Match!</h2><p class="muted">Sappy thinks you two were meant to be… and SAP B1 doesn't need another twin.</p></div>
+  <div class="pair"><div class="mcard"><small>Your new request</small><b>${esc(S.draft.name)}</b><span>${esc(S.draft.entity || '')} · ${esc(S.draft.country || '')}</span></div>
+  <div class="heart">${Math.round(m.score * 100)}%</div>
+  <div class="mcard" style="background:var(--mint2)"><small>${m.pending ? 'Already requested (in flight)' : 'Already in SAP B1'}</small><b>${esc(m.name)}</b><span>${m.code} · ${m.entity} · ${cname(m.country)}</span></div></div>
+  <div class="row" style="justify-content:center"><button class="btn mint big" onclick="useExisting('${m.code}')">💍 Use the existing record</button><button class="btn ghost big" onclick="justFriends()">🙅 Just friends: create new</button></div>
+  <p class="assume center">Fuzzy match on normalised names (abbreviations like “Natl”, “Univ”, “Hosp” expanded; “Pte Ltd”, “Sdn Bhd” ignored).</p>`);
+}
+function useExisting(code) {
+  $('#modal').classList.add('hidden'); S.dupsBlocked++;
+  diary(PEOPLE[S.me].name, `avoided a duplicate: reused ${code} instead of creating “${S.draft.name}”`);
+  S.bubble = `Yay! No evil twin born today 🥹<br>Use <b>${code}</b> — it's ready to transact <b>right now</b>. Zero approvals needed.`; S.bubbleCls = 'good';
+  S.draft = {}; S.anim = 'eat'; render(); confetti('💍');
+}
+async function justFriends() {
+  const why = await ask('Why is this a different record? 🤔', 'e.g. Different legal entity with its own tax number');
+  if (!why) return openMatch(bestMatch(S.draft.name, S.feedType));
+  S.resolvedDup = E.norm(S.draft.name); S.draft._dupReason = why; createRequest();
+}
+function createRequest() {
+  const id = 'MDM-0' + S.nextId++, chain = chainFor(S.feedType, S.draft), cc = COUNTRIES.find(c => c.n === S.draft.country).c, now = tick();
+  const fields = Object.fromEntries(Object.entries(S.draft).filter(([k]) => !['entity', 'country', '_dupReason'].includes(k)));
+  const r = { id, type: S.feedType, requester: S.me, entity: S.draft.entity, country: cc, fields, created: now, steps: chain.map((role, i) => ({ role, who: ROLE_OWNER[role], status: i ? 'todo' : 'waiting', at: null, since: i ? null : now })), cur: 0, status: 'Pending', sap: null };
+  REQS.unshift(r);
+  diary(PEOPLE[S.me].name, `submitted ${id} · new ${S.feedType} “${fields.name}”` + (S.draft._dupReason ? ` · overrode duplicate warning: “${S.draft._dupReason}”` : ''));
+  note(`📨 Teams card sent to <b>${PEOPLE[ROLE_OWNER[chain[0]]].name}</b> (${chain[0]}) for ${id}`);
+  S.bubble = `Nom nom! 😋 <b>${id}</b> is on its way.<br>Route: ${chain.join(' → ')} → SAP B1<br><small>Track it any time in 📦</small>`; S.bubbleCls = 'good';
+  S.draft = {}; S.missing.clear(); S.resolvedDup = null; S.anim = 'eat'; render();
+}
+
+// ---------- Swipe ----------
+function fieldRows(r) {
+  return Object.entries(r.fields).map(([k, v]) => {
+    let val = esc(v);
+    if (isSens(r.type, k)) {
+      const can = SEE_SENSITIVE.includes(PEOPLE[S.me].role), shown = can && S.peeked.has(r.id + k);
+      val = shown ? `<b>${esc(v)}</b> <small>👁 logged</small>` : `<span class="masked" onclick="peek('${r.id}','${k}')">••••${esc(String(v).slice(-2))} 🔒</span>`;
+    }
+    return `<tr><td class="muted">${esc(labelOf(r.type, k))}</td><td>${val}</td></tr>`;
+  }).join('');
+}
+function peek(id, k) {
+  const r = REQS.find(x => x.id === id);
+  if (!SEE_SENSITIVE.includes(PEOPLE[S.me].role)) return toast(`🔒 Sappy is guarding this 🛡️ Only Finance & MDM can see <b>${esc(labelOf(r.type, k))}</b>.`);
+  S.peeked.add(id + k); diary(PEOPLE[S.me].name, `viewed sensitive field “${labelOf(r.type, k)}” on ${id}`); render();
+}
+function sCard(r, top) {
+  const s = r.steps[r.cur], od = overdue(r);
+  return `<div class="scard ${top ? 'top' : ''}" data-id="${r.id}"><div class="stamp yes">APPROVE 💚</div><div class="stamp no">NOPE 💔</div>
+    <div class="sc-h"><span class="ticon">${RULES[r.type]?.icon || '📄'}</span><div><b>${esc(r.fields.name)}</b><small>${r.id} · New ${esc(r.type)} · ${r.entity} · ${flag(r.country)} ${cname(r.country)}</small></div></div>
+    <div class="sc-meta">From ${PEOPLE[r.requester].emoji} <b>${PEOPLE[r.requester].name}</b> · waiting on you <b>${ago(s.since)}</b> ${od ? '<span class="pill red">⏰ overdue</span>' : ''}</div>
+    <div class="sc-fields"><table>${fieldRows(r)}</table></div>
+    <div class="sc-route">${r.steps.map(st => `<span class="${st.status}">${st.status === 'done' ? '✓ ' : ''}${st.role}</span>`).join(' → ')} → 📦 SAP B1</div>
+    <div class="sc-foot">${sappy(od ? 'sad' : 'happy', 44)}<span>${od ? `Sappy has waited ${ago(s.since)}… 🥺` : 'Drag right to approve, left to send back'}</span></div></div>`;
+}
+VIEWS.swipe = () => {
+  const p = PEOPLE[S.me], role = p.role;
+  if (!ROLE_OWNER[role]) return `<div class="card center">${sappy('ok', 140)}<h2>You're a requestor 🙋</h2><p>Swipe approvals are for approvers. Jump into someone's shoes:</p><div class="row" style="justify-content:center">${['daniel', 'weijie', 'nurul', 'siti', 'priya'].map(k => `<button class="btn ghost" onclick="setMe('${k}')">${PEOPLE[k].emoji} ${PEOPLE[k].name} · ${PEOPLE[k].role}</button>`).join('')}</div></div>`;
+  const q = REQS.filter(r => r.status === 'Pending' && r.steps[r.cur]?.role === role).sort((a, b) => a.steps[a.cur].since - b.steps[b.cur].since);
+  const deck = q.length ? `<div class="deck">${q.slice(0, 3).map((r, i) => sCard(r, i === 0)).join('')}</div>
+     <div class="deckbtns"><button class="round no" onclick="decideId('${q[0].id}',false)" title="Send back">✖</button><button class="round yes" onclick="decideId('${q[0].id}',true)" title="${role === 'MDM' ? 'Final check OK → push to SAP B1' : 'Approve'}">${role === 'MDM' ? '🚀' : '✔'}</button></div>`
+    : `<div class="center" style="padding:40px 0">${sappy('happy', 170, '👑')}<h2>Inbox zero! Sappy is proud of you 🥹</h2><p class="muted">Try another approver from the role menu.</p></div>`;
+  return `<div class="grid2"><div class="card"><h2>👉 ${p.emoji} ${p.name}'s approval deck <small>(${role})</small></h2>${deck}</div>
+    <div class="card"><h3>How this works in real life</h3>
+      <ul><li>💬 Each card arrives as a <b>Microsoft Teams adaptive card</b> (and Outlook actionable message), so approvers act where they already are. No new app to open.</li>
+      <li>✅ Approvers only see <b>their part</b> of the request. Finance sees credit terms and bank details; QA/RA sees the licence.</li>
+      <li>⏰ Sappy nudges after <b>24 h</b> and escalates to the approver's manager at <b>72 h</b>. Wei Jie isn't slow; he just never saw the email.</li>
+      <li>🔒 Sensitive fields stay masked until Finance or MDM taps them, and every tap is written to the diary.</li>
+      <li>🛠️ For Priya (MDM), the final swipe builds the SAP B1 record straight from the approved form, with no re-keying.</li></ul>
+      <div class="note">Tip for the demo: approve as <b>Nurul (QA/RA)</b>, then Siti, then <b>Priya</b> to watch MDM-0151 land in SAP B1.</div></div></div>`;
+};
+AFTER.swipe = () => {
+  const el = document.querySelector('.scard.top'); if (!el) return;
+  const r = REQS.find(x => x.id === el.dataset.id); let x0 = null, dx = 0;
+  el.addEventListener('pointerdown', e => { if (e.target.closest('.masked')) return; x0 = e.clientX; dx = 0; el.setPointerCapture(e.pointerId); el.style.transition = 'none'; });
+  el.addEventListener('pointermove', e => { if (x0 === null) return; dx = e.clientX - x0; el.style.transform = `translateX(${dx}px) rotate(${dx / 16}deg)`; el.querySelector('.stamp.yes').style.opacity = Math.max(0, dx / 110); el.querySelector('.stamp.no').style.opacity = Math.max(0, -dx / 110); });
+  el.addEventListener('pointerup', () => { if (x0 === null) return; x0 = null; el.style.transition = ''; if (dx > 110) decide(r, true, el); else if (dx < -110) decide(r, false, el); else { el.style.transform = ''; el.querySelectorAll('.stamp').forEach(s => s.style.opacity = 0); } });
+};
+function decideId(id, ok) { decide(REQS.find(x => x.id === id), ok, document.querySelector('.scard.top')); }
+async function decide(r, ok, el) {
+  if (el) { el.style.transform = `translateX(${ok ? 700 : -700}px) rotate(${ok ? 30 : -30}deg)`; el.style.opacity = 0; }
+  await sleep(260);
+  if (!ok) { const why = await ask('Send back to requester 💔 — what needs fixing?', 'e.g. Credit terms above 30 days need CFO sign-off'); if (why) rejectStep(r, why); render(); return; }
+  if (r.steps[r.cur].role === 'MDM' || r.cur === r.steps.length - 1) { await pushSAP(r); render(); return; }
+  approveStep(r); render();
+}
+function approveStep(r) {
+  const s = r.steps[r.cur]; s.status = 'done'; s.at = tick(); S.approvals[S.me] = (S.approvals[S.me] || 0) + 1;
+  diary(PEOPLE[S.me].name, `approved ${r.id} as ${s.role} (after ${ago(s.since, s.at)})`);
+  r.cur++; const n = r.steps[r.cur]; n.status = 'waiting'; n.since = s.at;
+  note(`💚 ${PEOPLE[S.me].name} approved ${r.id}. Teams card sent to <b>${PEOPLE[n.who].name}</b> (${n.role}). ${PEOPLE[r.requester].name} can see it move in 📦`);
+}
+function rejectStep(r, why) {
+  const s = r.steps[r.cur]; s.status = 'rejected'; s.at = tick(); s.comment = why; r.status = 'Returned';
+  diary(PEOPLE[S.me].name, `sent ${r.id} back to ${PEOPLE[r.requester].name}: “${why}”`);
+  note(`💔 ${PEOPLE[r.requester].name}, ${r.id} needs a fix: “${esc(why)}”`);
+}
+function newCode(r) {
+  const n = S.codeN++, cc = r.country;
+  if (r.type === 'Customer') return `C-${cc}-00${n}`; if (r.type === 'Vendor') return `V-${cc}-00${n}`;
+  if (r.type === 'Item') return `${(r.fields.line || 'A')[8] || 'A'}-26-0${n}`; if (r.type === 'Cost Center') return `CC-${r.entity}-0${n}`;
+  return `${r.type.slice(0, 3).toUpperCase()}-${n}`;
+}
+function sapPayload(r, code) {
+  const f = r.fields, m = v => v ? '••••' + String(v).slice(-2) : undefined;
+  if (r.type === 'Customer' || r.type === 'Vendor') return { CardCode: code, CardName: f.name, CardType: r.type === 'Customer' ? 'cCustomer' : 'cSupplier', Country: r.country, FederalTaxID: f.taxno, EmailAddress: f.email, PayTermsGrpCode: m(f.credit || f.payterms), BPBankAccounts: r.type === 'Vendor' ? [{ BankCode: f.bank, AccountNo: m(f.acct), BICSwiftCode: m(f.swift) }] : undefined, U_Entity: r.entity, U_MDMRequest: r.id };
+  if (r.type === 'Item') return { ItemCode: code, ItemName: f.name, ItemsGroupCode: f.line, InventoryUOM: f.uom, U_IVD: f.ivd, U_LicenceNo: f.licence, U_Storage: f.storage, Mainsupplier: f.supplier, U_Entity: r.entity, U_MDMRequest: r.id };
+  if (r.type === 'Cost Center') return { CenterCode: code, CenterName: f.name, InWhichDimension: 1, CenterOwner: f.owner, U_BudgetCode: f.budget, U_MDMRequest: r.id };
+  return { Code: code, Name: f.name, ...f, U_MDMRequest: r.id };
+}
+function sapEndpoint(r) { return { Customer: 'BusinessPartners', Vendor: 'BusinessPartners', Item: 'Items', 'Cost Center': 'ProfitCenters' }[r.type] || ('U_' + r.type.replace(/\W/g, '').toUpperCase() + ' (user-defined object)'); }
+function pushSAP(r) {
+  return new Promise(res => {
+    const code = newCode(r), ep = sapEndpoint(r);
+    modal(`<h2>🚀 Pushing ${r.id} to SAP Business One</h2><p class="muted">Priya's final check ✔ → Sappy builds the record from the approved form, so nobody re-keys anything.</p>
+      <pre class="term" id="term"></pre><small>Payload (sensitive values masked in this log, sent over TLS):</small><pre class="json">${esc(JSON.stringify(sapPayload(r, code), null, 2))}</pre>
+      <div class="row"><button class="btn pink" id="sapDone" disabled onclick="closeModal()">🎉 Yay!</button><span class="assume">Prototype simulates the SAP B1 Service Layer (REST/OData). Production path: Power Automate custom connector → Service Layer.</span></div>`);
+    const lines = ['→ POST /b1s/v1/Login   (service account SAPPY_SVC)', '← 200 OK · session started', `→ POST /b1s/v1/${ep}`, `← 201 Created · ${code}`, '✓ Diary entry sealed · requester notified in Teams'];
+    let i = 0; const iv = setInterval(() => {
+      $('#term').textContent += lines[i] + '\n';
+      if (++i === lines.length) {
+        clearInterval(iv);
+        const s = r.steps[r.cur]; s.status = 'done'; s.at = tick(); r.cur++; r.status = 'Live'; r.sap = code; S.approvals[S.me] = (S.approvals[S.me] || 0) + 1;
+        MASTER.push({ code, type: r.type, name: r.fields.name, country: r.country, entity: r.entity });
+        diary(PEOPLE[S.me].name, `created ${code} in SAP B1 from ${r.id} via Service Layer`);
+        note(`🎉 <b>${PEOPLE[r.requester].name}</b>, “${esc(r.fields.name)}” is LIVE in SAP B1 as <b>${code}</b> after ${ago(r.created)}. Go sell!`);
+        $('#sapDone').disabled = false; S.party = Date.now() + 4000; confetti('🎉'); res();
+      }
+    }, 480);
+  });
+}
+
+// ---------- Track & Diary ----------
+VIEWS.track = () => {
+  const list = REQS.filter(r => !S.mineOnly || r.requester === S.me);
+  const card = r => {
+    const pill = r.status === 'Live' ? '<span class="pill mint">✅ Live in SAP B1</span>' : r.status === 'Returned' ? '<span class="pill red">↩️ Sent back</span>' : overdue(r) ? '<span class="pill red">⏰ Overdue</span>' : '<span class="pill sun">🛵 On its way</span>';
+    const steps = r.steps.map(s => {
+      const od = s.status === 'waiting' && clock - s.since > 48 * HOUR;
+      const icon = { done: '✅', waiting: '🛵', todo: '⚪', rejected: '💔' }[s.status];
+      const sub = s.status === 'done' ? `${PEOPLE[s.who].name} · ${ago(s.at)} ago` : s.status === 'waiting' ? `${PEOPLE[s.who].name} · waiting ${ago(s.since)}${od ? `<br><button class="btn xs" onclick="nudge('${r.id}')">⏰ Nudge</button>` : ''}` : s.status === 'rejected' ? `“${esc(s.comment)}”` : PEOPLE[s.who].name;
+      return `<div class="pstep ${s.status} ${od ? 'od' : ''}"><div class="dot">${icon}</div><b>${s.role}</b><small>${sub}</small></div>`;
+    }).join('');
+    const left = r.steps.length - r.cur;
+    const eta = r.status === 'Pending' ? `📍 ETA ≈ ${(left * 0.5).toFixed(1)} days (12 h SLA per step)` : r.status === 'Live' ? `🏁 Done in ${ago(r.created, r.steps[r.steps.length - 1].at)} — vs ~18 days by email` : '↩️ Waiting for the requester to fix and resubmit';
+    return `<div class="tcard"><div class="t-h">${RULES[r.type]?.icon || '📄'} <b>${esc(r.fields.name)}</b> <small>${r.id} · ${esc(r.type)} · ${r.entity} · ${flag(r.country)} · by ${PEOPLE[r.requester].name}</small> ${pill}</div>
+      <div class="parcel"><div class="pstep done"><div class="dot">🍼</div><b>Submitted</b><small>${ago(r.created)} ago</small></div>${steps}<div class="pstep ${r.status === 'Live' ? 'done' : 'todo'}"><div class="dot">📦</div><b>SAP B1</b><small>${r.sap || '—'}</small></div></div><small>${eta}</small></div>`;
+  };
+  const bad = S.tamper ? verifyDiary() : -1;
+  return `<div class="grid2"><div class="card"><div class="row" style="justify-content:space-between"><h2>📦 Where's my request?</h2><label><input type="checkbox" ${S.mineOnly ? 'checked' : ''} onchange="S.mineOnly=this.checked;render()"> only mine (${PEOPLE[S.me].name})</label></div>
+      <p class="muted">Parcel-style tracking: every requestor and approver can see exactly where a request is, so nobody has to ask the MDM mailbox.</p>${list.map(card).join('') || '<p>No requests yet.</p>'}</div>
+    <div class="card"><h2>📜 Sappy's Diary</h2><p class="muted">Every submission, approval, view of a sensitive field and SAP B1 creation is sealed into a hash chain. Change one entry and the chain breaks, so audits take seconds, not email archaeology.</p>
+      <div class="row"><button class="btn mint xs" onclick="checkDiary()">🔍 Verify diary</button>${S.tamper ? '<button class="btn xs" onclick="undoTamper()">↩️ Undo tampering</button>' : '<button class="btn xs" onclick="tamper()">😈 Try to tamper</button>'}<button class="btn xs" onclick="exportDiary()">⬇️ Export CSV</button></div>
+      ${S.tamper ? `<div class="note red">😱 Entry #${bad + 1} no longer matches its seal. Sappy caught it!</div>` : ''}
+      <div class="diary">${DIARY.map((e, i) => ({ e, i })).reverse().map(({ e, i }) => `<div class="dentry ${S.tamper && i >= bad && bad >= 0 ? 'bad' : ''}"><b>${esc(e.who)}</b> ${esc(e.text)}<br><small>#${i + 1} · ${new Date(e.t).toLocaleString('en-SG')}</small> <code>seal ${e.hash.slice(0, 10)}…</code></div>`).join('')}</div></div></div>`;
+};
+function checkDiary() { const b = verifyDiary(); if (b < 0) { toast(`✅ All ${DIARY.length} diary entries verified. Nobody has rewritten history.`); } else { modal(`<div class="center">${sappy('sick', 140, '', 'shock')}<h2>Tampering detected at entry #${b + 1}! 😱</h2><p>“${esc(DIARY[b].who)} ${esc(DIARY[b].text)}” doesn't match its seal.</p><button class="btn pink" onclick="closeModal()">OK</button></div>`); } }
+function tamper() { const i = DIARY.findIndex(e => /approved/.test(e.text)); S.tamper = { i, who: DIARY[i].who }; DIARY[i].who = 'Mystery Person 🥷'; toast('😈 Someone quietly changed who approved entry #' + (i + 1) + '…'); render(); }
+function undoTamper() { DIARY[S.tamper.i].who = S.tamper.who; S.tamper = null; render(); toast('😇 History restored. Chain valid again.'); }
+function download(name, text) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: 'text/csv' })); a.download = name; a.click(); }
+function exportDiary() { download('sappy_audit_log.csv', 'n,time,who,event,prev_seal,seal\n' + DIARY.map((e, i) => [i + 1, new Date(e.t).toISOString(), e.who, e.text, e.prev, e.hash].map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n')); }
+
+// ---------- Garden (regional business view) ----------
+const BT = E.backtest();
+function gColor(g) { return g == null ? '#eee' : g < -0.03 ? '#ffd9d4' : g < 0.05 ? '#fff1c9' : g < 0.15 ? '#d6f5e3' : '#9fe3c3'; }
+function allCustomers() { return COUNTRIES.flatMap(C => E.customerRows(C.c, S.merged).map(r => ({ ...r, cc: C.c }))); }
+function actionsList() {
+  const A = []; let best = null;
+  COUNTRIES.forEach(C => PRODUCTS.forEach(P => { const g = E.growth(E.countrySeries(C.c, P.p)); if (!best || g.yoy > best.g.yoy) best = { C, P, g }; }));
+  const fw = E.forward(best.C.c, best.P.p);
+  A.push(`📈 <b>Stock up: ${best.C.f} ${best.C.n} · ${best.P.n}</b> is growing fastest (${pct(best.g.yoy)} YoY). Sappy forecasts <b>${fmt(sum(fw.sappy))}</b> units for Nov–Jan vs <b>${fmt(sum(fw.base))}</b> with today's 6-month average, so raise allocation by ~${pct(sum(fw.sappy) / sum(fw.base) - 1)} before the December budget-flush peak.`);
+  const cs = allCustomers();
+  cs.filter(c => c.churn.length).forEach(c => {
+    const dup = DUPS.find(d => d.dupOf === c.code && !S.merged.has(d.code));
+    A.push(dup ? `👻 <b>${esc(c.name)}</b> looks like it's leaving (${c.churn.map(p => p + ' ' + pct(c.g[p].mom)).join(', ')}), but it's <b>not</b>. Orders moved to its duplicate record “${esc(dup.name)}”. <b>Merge the twin before calling sales.</b>`
+      : `🥀 <b>Save the account: ${flag(c.cc)} ${esc(c.name)}</b> — ${c.churn.map(p => `Product ${p} ${pct(c.g[p].mom)}`).join(', ')} in 3 months. Book an account review within 2 weeks and check for competitor tenders.`);
+  });
+  cs.flatMap(c => c.gaps.map(p => ({ c, p, pot: c.potential[p] }))).sort((a, b) => b.pot - a.pot).slice(0, 3).forEach(({ c, p, pot }) =>
+    A.push(`🪴 <b>Cross-sell Product ${p} to ${flag(c.cc)} ${esc(c.name)}</b>: it buys ${PRODUCTS.filter(x => !c.gaps.includes(x.p)).map(x => x.p).join(' & ')} but never ${p}. Est. <b>+${fmt(pot)} units/month</b> (50% of the peer median).`));
+  A.push(`❄️ <b>Plan around the February dip</b> (~${Math.round((1 - BT.S[1]) * 100)}% below average, Lunar New Year / Tết). Pull promotions into January and March, and don't read February as churn.`);
+  const hidden = ORDERS.filter(o => DUPS.some(d => d.code === o.code && !S.merged.has(d.code))).reduce((s, o) => s + o.units, 0);
+  if (hidden) A.push(`🧼 <b>Clean first:</b> ${fmt(hidden)} units of real demand are booked under duplicate customer records and distort customer-level views. Merge them in 🏠 Sappy's Room.`);
+  return A;
+}
+VIEWS.garden = () => {
+  const maxW = {}; PRODUCTS.forEach(P => maxW[P.p] = Math.max(...COUNTRIES.map(C => E.growth(E.countrySeries(C.c, P.p)).w12)));
+  const plots = COUNTRIES.map(C => {
+    const custs = E.customerRows(C.c, S.merged), wil = custs.filter(c => c.churn.length).length, gaps = custs.reduce((s, c) => s + c.gaps.length, 0);
+    const fl = PRODUCTS.map(P => { const g = E.growth(E.countrySeries(C.c, P.p)), st = g.yoy < -0.03 ? 'wilt' : g.yoy > 0.15 ? 'bloom' : ''; return `<div class="flower ${st}" title="${P.n}: ${fmt(g.w12)} units, ${pct(g.yoy)} YoY"><div class="head">${g.yoy < -0.03 ? '🥀' : P.e}</div><div class="stem" style="height:${18 + 80 * g.w12 / maxW[P.p]}px"></div><small>${P.p}<br>${pct(g.yoy)}</small></div>`; }).join('');
+    return `<div class="plot ${S.gardenC === C.c ? 'on' : ''}" onclick="S.gardenC='${C.c}';render()"><div class="plot-h">${C.f} ${C.n}</div><div class="bed">${fl}</div><div class="soil"></div><div class="plot-f">${wil ? `🥀 ${wil} wilting account${wil > 1 ? 's' : ''}` : '🌈 no wilting'}${gaps ? ` · 🪴 ${gaps} empty pot${gaps > 1 ? 's' : ''}` : ''}</div></div>`;
+  }).join('');
+  const heat = `<table class="heat"><tr><th>Country</th>${PRODUCTS.map(P => `<th class="num">${P.e} ${P.n}<br><small>12-mo units · YoY · 3m momentum</small></th>`).join('')}<th class="num">Total</th></tr>${COUNTRIES.map(C => `<tr><td><b>${C.f} ${C.n}</b></td>${PRODUCTS.map(P => { const g = E.growth(E.countrySeries(C.c, P.p)); return `<td class="cell num" style="background:${gColor(g.yoy)}">${fmt(g.w12)}<br>${pct(g.yoy)} · ${g.mom >= 0 ? '↗' : '↘'} ${pct(g.mom)}</td>`; }).join('')}<td class="num"><b>${fmt(E.growth(E.countrySeries(C.c, 'ALL')).w12)}</b><br>${pct(E.growth(E.countrySeries(C.c, 'ALL')).yoy)}</td></tr>`).join('')}
+    <tr><td><b>All 5</b></td>${PRODUCTS.map(P => { const g = E.growth(E.countrySeries('ALL', P.p)); return `<td class="num"><b>${fmt(g.w12)}</b><br>${pct(g.yoy)}</td>`; }).join('')}<td class="num"><b>${fmt(E.growth(E.countrySeries('ALL', 'ALL')).w12)}</b><br>${pct(E.growth(E.countrySeries('ALL', 'ALL')).yoy)}</td></tr></table>`;
+  const C = COUNTRIES.find(c => c.c === S.gardenC), custs = E.customerRows(C.c, S.merged);
+  const ctab = `<table><tr><th>Customer</th>${PRODUCTS.map(P => `<th class="num">${P.p} · 12-mo</th>`).join('')}<th>Sappy says</th></tr>${custs.map(c => `<tr><td><b>${esc(c.name)}</b><br><small>${c.code} · ${c.entity}${c.isDup ? ' · <span class="pill red">duplicate record</span>' : ''}</small></td>${PRODUCTS.map(P => `<td class="num">${c.gaps.includes(P.p) ? '🪴' : fmt(c.g[P.p].w12)}<br><small>${c.gaps.includes(P.p) ? '+' + c.potential[P.p] + '/mo?' : '↘↗'[c.g[P.p].mom >= 0 ? 1 : 0] + ' ' + pct(c.g[P.p].mom)}</small></td>`).join('')}<td>${c.churn.length ? `🥀 wilting (${c.churn.join(', ')})${DUPS.some(d => d.dupOf === c.code && !S.merged.has(d.code)) ? '<br><small>…or is it? 👯 a twin is stealing its orders</small>' : ''}` : c.isDup ? '👯 merge me' : c.gaps.length ? `🪴 cross-sell ${c.gaps.join(', ')}` : '🌷 healthy'}</td></tr>`).join('')}</table>`;
+  const ib = COUNTRIES.map(C => { const a = INBOX_COUNTS[C.c].slice(12, 24), t = k => a.reduce((s, x) => s + x[k], 0); return { C, po: t('po'), enq: t('enq'), fup: t('fup'), mdm: t('mdm') }; });
+  const unmerged = DUPS.filter(d => !S.merged.has(d.code));
+  return `${unmerged.length ? `<div class="note red">👯 <b>${unmerged.length} duplicate customer records are splitting orders.</b> National University Hospital looks like it's wilting, but it isn't! <button class="btn xs" onclick="go('home')">Merge twins in Sappy's Room →</button></div>` : '<div class="note mint">🧼 Data is clean: all duplicate customers merged, so customer-level trends are real.</div>'}
+  <div class="card"><div class="row" style="justify-content:space-between"><h2>🌱 Sappy's Garden: five countries, three flowers each</h2><button class="btn xs" onclick="exportPO()">⬇️ Download PO data (CSV)</button></div>
+    <p class="muted">Flower height = 12-month PO units (Nov '25 – Oct '26). 🌷 A · 🌻 B · 🌼 C. ✨ = growing &gt;15% YoY, 🥀 = shrinking. Click a plot to dig in.</p>
+    <div class="garden">${plots}</div>
+    <div class="note" style="margin-top:14px"><b>📏 How we measure growth.</b> <b>Primary: YoY</b> = PO units Aug–Oct 2026 ÷ Aug–Oct 2025 − 1 (same season, so it's fair). <b>Secondary: 3-month momentum</b> = Aug–Oct 2026 ÷ May–Jul 2026 − 1, an early-warning signal used for churn alerts (an account is flagged at ≤ −30%). Volumes count <b>customer purchase orders only</b>, not enquiries, follow-ups or MDM setup requests.</div></div>
+  <div class="grid2"><div class="card"><h3>🗺️ Country × product table</h3>${heat}</div>
+    <div class="card"><h3>📈 Monthly PO units by country</h3><div class="chartbox"><canvas id="gChart"></canvas></div></div></div>
+  <div class="grid2"><div class="card"><h3>${C.f} ${C.n}: customer plots</h3>${ctab}</div>
+    <div class="card"><h3>✅ Sappy's recommended actions</h3><ol class="actions">${actionsList().map(a => `<li>${a}</li>`).join('')}</ol>
+    <p class="assume">Cross-sell estimate = 50% of the peer median monthly volume in the same country (assumption).</p></div></div>
+  <div class="card"><h3>📮 What's in the inbox? Customer POs vs everything else (Nov '25 – Oct '26)</h3>
+    <table><tr><th>Country</th><th class="num">🛒 Customer POs</th><th class="num">💬 Enquiries</th><th class="num">🔁 Follow-ups</th><th class="num">🐣 MDM setup requests</th><th class="num">Actionable share</th></tr>
+    ${ib.map(x => `<tr><td>${x.C.f} ${x.C.n}</td><td class="num"><b>${fmt(x.po)}</b></td><td class="num">${fmt(x.enq)}</td><td class="num">${fmt(x.fup)}</td><td class="num">${fmt(x.mdm)}</td><td class="num">${pct(x.po / (x.po + x.enq + x.fup + x.mdm)).replace('+', '')}</td></tr>`).join('')}</table>
+    <p class="muted">Only 🛒 POs feed the volume and forecast numbers. 🐣 MDM setup requests are tracked separately: Vietnam's high count signals new-customer onboarding, a leading indicator of growth. See 📮 Inbox Sorter for how messages are classified.</p></div>`;
+};
+AFTER.garden = () => {
+  if (!window.Chart) return;
+  const cols = ['#ff7fa8', '#5aaef5', '#ffc23d', '#4cc79a', '#9b7bff'];
+  charts.push(new Chart($('#gChart'), { type: 'line', data: { labels: MONTHS.slice(12, 24).map(m => m.label), datasets: COUNTRIES.map((C, i) => ({ label: C.f + ' ' + C.n, data: E.countrySeries(C.c, 'ALL').slice(12, 24), borderColor: cols[i], backgroundColor: cols[i], borderWidth: 3, pointRadius: 2, tension: .35 })) },
+    options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10 } } }, scales: { y: { title: { display: true, text: 'PO units' } } } } }));
+};
+function exportPO() { download('lives_group_synthetic_po_lines.csv', 'customer_code,country,product,month,units\n' + ORDERS.map(o => [o.code, o.country, o.p, MONTHS[o.mi].y + '-' + String(MONTHS[o.mi].m + 1).padStart(2, '0'), o.units].join(',')).join('\n')); }
+
+// ---------- Crystal Ball (forecasting) ----------
+VIEWS.crystal = () => {
+  const y = E.countrySeries(S.cbC, S.cbP), b = E.fcBaseline(y, 21, 3), s = E.fcSappy(y, 21, 3, BT.S), a = y.slice(21, 24);
+  const wb = sum(a.map((v, i) => Math.abs(v - b[i]))) / sum(a), ws = sum(a.map((v, i) => Math.abs(v - s[i]))) / sum(a);
+  const fw = E.forward(S.cbC, S.cbP);
+  const sel = `<select onchange="S.cbC=this.value;render()"><option value="ALL">🌏 All 5 countries</option>${COUNTRIES.map(C => `<option value="${C.c}" ${S.cbC === C.c ? 'selected' : ''}>${C.f} ${C.n}</option>`).join('')}</select>
+    <select onchange="S.cbP=this.value;render()"><option value="ALL">All products</option>${PRODUCTS.map(P => `<option value="${P.p}" ${S.cbP === P.p ? 'selected' : ''}>${P.e} ${P.n}</option>`).join('')}</select>`;
+  const mo = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
+  return `<div class="grid2"><div class="card"><div class="row" style="justify-content:space-between"><h2>🔮 Fortune-Teller Sappy</h2><div class="row">${sel}</div></div>
+      <div class="chartbox" style="height:320px"><canvas id="cChart"></canvas></div>
+      <p class="assume">Back-test: both models trained on Nov '24 – Jul '26 only, then asked to predict Aug – Oct '26 (shaded) without peeking. Then retrained on all data to forecast Nov '26 – Jan '27.</p></div>
+    <div><div class="card center"><div class="row" style="justify-content:center;gap:24px">
+        <div><div style="font-size:54px">🧓</div><b>Grandma's Average</b><br><small>today: flat 6-month average</small><h2 style="color:#b9874f">off by ${(wb * 100).toFixed(1)}%</h2></div>
+        <div>${sappy('happy', 70, '🎩')}<br><b>Sappy's Crystal Ball</b><br><small>pooled seasonality + trend</small><h2 style="color:var(--pink)">off by ${(ws * 100).toFixed(1)}%</h2></div></div>
+        <div class="bubble ${ws < wb ? 'good' : ''}">${ws < wb ? `“Grandma was off by ${(wb * 100).toFixed(0)}%, I was off by ${(ws * 100).toFixed(0)}% ✨” That's <b>${Math.round((1 - ws / wb) * 100)}% less forecast error</b> for this selection.` : 'Grandma wins this one! Sappy is honest about it 🙈 (flat, non-seasonal series)'}</div></div>
+      <div class="card"><h3>Next 3 months · ${S.cbC === 'ALL' ? 'all countries' : cname(S.cbC)} · ${S.cbP === 'ALL' ? 'all products' : 'Product ' + S.cbP}</h3>
+        <table><tr><th>Month</th><th class="num">🧓 Grandma</th><th class="num">🔮 Sappy</th><th class="num">Gap</th></tr>${[24, 25, 26].map((mi, j) => `<tr><td>${MONTHS[mi].label}</td><td class="num">${fmt(fw.base[j])}</td><td class="num"><b>${fmt(fw.sappy[j])}</b></td><td class="num">${pct(fw.sappy[j] / fw.base[j] - 1)}</td></tr>`).join('')}</table>
+        <p class="muted">December is the budget-flush peak. A flat average under-orders right when hospitals spend the most, which means stock-outs on reagents with long lead times.</p></div></div></div>
+  <div class="grid2"><div class="card"><h3>How Sappy's crystal ball works (no black box)</h3>
+      <ol><li><b>Clean first.</b> Merge duplicate customers so each hospital's history is one series (see 🏠).</li>
+      <li><b>Learn the seasons together.</b> One country alone is too noisy, so Sappy pools all 15 country × product series to learn the monthly shape (Feb dip for Lunar New Year / Tết, Q4 budget flush).</li>
+      <li><b>Find the trend.</b> Remove the season, fit a trend line on the last 12 months, then put the season back.</li>
+      <li><b>Flag what matters.</b> 3-month momentum ≤ −30% → 🥀 churn alert; peers buy a product you don't → 🪴 cross-sell.</li></ol>
+      <div class="seasbar">${BT.S.map((v, i) => `<div style="height:${(v - .6) * 150}px;background:${v < .95 ? 'var(--sky2)' : v > 1.05 ? 'var(--pink)' : 'var(--pink2)'}">${mo[i]}<br>${v.toFixed(2)}</div>`).join('')}</div>
+      <small>Learned seasonal index (1.00 = average month)</small>
+      <p class="assume">Runs as a monthly Python/Power BI job on the SAP B1 PO extract. Replaces ~2 days of manual spreadsheet consolidation per cycle (assumption). Next step after v1: gradient-boosted model with customer features, once 24+ months of clean data exist.</p></div>
+    <div class="card"><h3>Back-test scorecard (WAPE, Aug–Oct '26)</h3><table><tr><th>Country</th>${PRODUCTS.map(P => `<th class="num">${P.p}: 🧓 / 🔮</th>`).join('')}</tr>${COUNTRIES.map(C => `<tr><td>${C.f} ${C.n}</td>${PRODUCTS.map(P => { const r = BT.rows.find(x => x.c === C.c && x.p === P.p); return `<td class="num">${(r.wb * 100).toFixed(0)}% / <b style="color:${r.ws < r.wb ? '#1f8a63' : '#d63c4b'}">${(r.ws * 100).toFixed(0)}%</b></td>`; }).join('')}</tr>`).join('')}
+      <tr><td><b>Overall</b></td><td colspan="3" class="num"><b>🧓 ${(BT.wb * 100).toFixed(1)}% → 🔮 ${(BT.ws * 100).toFixed(1)}%</b> (${Math.round((1 - BT.ws / BT.wb) * 100)}% less error; Sappy wins ${BT.rows.filter(r => r.ws < r.wb).length}/15)</td></tr></table>
+      <p class="assume">WAPE = Σ|actual − forecast| ÷ Σ actual. Synthetic data with built-in seasonality; real gains to be validated in the pilot.</p></div></div>`;
+};
+AFTER.crystal = () => {
+  if (!window.Chart) return;
+  const y = E.countrySeries(S.cbC, S.cbP), b = E.fcBaseline(y, 21, 3), s = E.fcSappy(y, 21, 3, BT.S), fw = E.forward(S.cbC, S.cbP);
+  const L = MONTHS.length, mk = (bt, f) => { const a = Array(L).fill(null); a[20] = y[20]; bt.forEach((v, i) => a[21 + i] = v); a[23] = bt[2]; f.forEach((v, i) => a[24 + i] = v); return a; };
+  const bg = { id: 'bg', beforeDraw(c) { const { ctx, chartArea: ca, scales: { x } } = c; ctx.save(); ctx.fillStyle = 'rgba(255,194,61,.13)'; ctx.fillRect(x.getPixelForValue(20.5), ca.top, x.getPixelForValue(23.5) - x.getPixelForValue(20.5), ca.height); ctx.fillStyle = 'rgba(155,123,255,.10)'; ctx.fillRect(x.getPixelForValue(23.5), ca.top, ca.right - x.getPixelForValue(23.5), ca.height); ctx.restore(); } };
+  charts.push(new Chart($('#cChart'), { type: 'line', plugins: [bg], data: { labels: MONTHS.map(m => m.label), datasets: [
+    { label: 'Actual POs', data: y.concat([null, null, null]), borderColor: '#3a2e39', backgroundColor: '#3a2e39', borderWidth: 3, pointRadius: 2, tension: .3 },
+    { label: "🧓 Grandma's 6-mo average", data: mk(b, fw.base), borderColor: '#c9945a', backgroundColor: '#c9945a', borderDash: [6, 5], borderWidth: 3, pointRadius: 3, spanGaps: true },
+    { label: '🔮 Sappy', data: mk(s, fw.sappy), borderColor: '#ff5c95', backgroundColor: '#ff5c95', borderWidth: 3, pointRadius: 3, tension: .3, spanGaps: true }] },
+    options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { y: { title: { display: true, text: 'PO units / month' } } } } }));
+};
+
+// ---------- Inbox Sorter ----------
+VIEWS.sorter = () => {
+  const bins = Object.entries(CLASSES).map(([k, c]) => {
+    const items = (S.sorted || []).filter(x => x.r.cls === k);
+    const next = { PO: '→ Draft sales order in SAP B1 for sales admin to confirm', ENQ: '→ Routed to country sales rep in Teams (1-day SLA)', FUP: '→ Auto-reply with live order status', MDM: '→ Turned into a pre-filled 🍼 Feed Sappy draft' }[k];
+    return `<div class="bin"><h3>${c.icon} ${c.label} <small>(${items.length})</small></h3><small>${next}</small>${items.map(x => `<div class="msg fly"><b>${flag(x.m.cc)} ${esc(x.m.from)}</b>${esc(x.m.text)}<br><span class="pill grape">${Math.round(x.r.conf * 100)}% sure</span>${x.r.qty ? ` <span class="pill mint">qty ${x.r.qty} ${x.r.unit}</span>` : ''}${x.r.product ? ` <span class="pill sky">Product ${x.r.product}</span>` : ''}${k === 'MDM' ? ` <button class="btn xs" onclick="toDraft('${esc(x.m.text).replace(/'/g, '')}')">🍼 open draft</button>` : ''}</div>`).join('')}</div>`;
+  }).join('');
+  return `<div class="card"><div class="row" style="justify-content:space-between"><div><h2>📮 Inbox Sorter</h2><p class="muted">The shared mailbox mixes real purchase orders with enquiries, chasers and new-account requests. Sappy sorts them so only real POs count as demand.</p></div>
+      <button class="btn pink big" onclick="sortInbox()">🪄 Let Sappy sort ${INBOX.length} emails</button></div>
+    ${S.sorted ? '' : `<div>${INBOX.map(m => `<div class="msg"><b>${flag(m.cc)} ${esc(m.from)}</b>${esc(m.text)}</div>`).join('')}</div>`}
+    ${S.sorted ? `<div class="bins">${bins}</div>` : ''}</div>
+  <div class="card"><h3>🧪 Try your own message</h3><div class="row"><input id="tryMsg" style="flex:1;font:inherit;border:2px solid #d9c9d3;border-radius:12px;padding:8px" placeholder="e.g. Please supply 30 kits of Product A, PO 5521 attached"><button class="btn sun" onclick="tryClassify()">Sort it</button></div><div id="tryOut" style="margin-top:8px"></div>
+  <p class="assume">Prototype uses a transparent keyword model so the business can read the rules. Production: Azure AI Language custom classifier (or a small LLM) in Power Automate, retrained on the team's own corrections.</p></div>`;
+};
+async function sortInbox() { S.sorted = []; render(); for (const m of INBOX) { S.sorted.push({ m, r: E.classify(m.text) }); render(); await sleep(170); } toast('✨ Sorted! Only 🛒 POs count as demand in the Garden.'); }
+function tryClassify() { const t = $('#tryMsg').value; if (!t) return; const r = E.classify(t), c = CLASSES[r.cls]; $('#tryOut').innerHTML = `<div class="note">${c.icon} <b>${c.label}</b> · ${Math.round(r.conf * 100)}% sure${r.qty ? ` · qty ${r.qty} ${r.unit}` : ''}${r.product ? ` · Product ${r.product}` : ''}</div>`; }
+function toDraft(text) { const n = text.match(/for ([A-Z][\w ]+?)( —|\.|,| please|$)/), item = /item/i.test(text); S.feedType = item ? 'Item' : 'Customer'; S.draft = { name: item ? 'Product A — Lyme IgG Reagent Kit 96T' : (n ? n[1].trim() : ''), country: 'Malaysia' }; S.bubble = '📮 I pre-filled this from the email. Just add the missing bits!'; S.bubbleCls = ''; go('feed'); }
+
+// ---------- Rule Lego ----------
+VIEWS.lego = () => {
+  const t = S.legoType, r = RULES[t], roles = Object.keys(ROLE_OWNER);
+  return `<div class="grid2"><div class="card"><h2>🧩 Rule Lego: change the process without IT</h2>
+    <p class="muted">Every form field, required flag, sensitive flag and approval step is a block the MDM team can snap on or off. Changes go live on the 🍼 form instantly and are logged in the diary.</p>
+    <div class="picks">${Object.keys(RULES).map(k => `<button class="pick ${k === t ? 'on' : ''}" onclick="S.legoType='${esc(k)}';render()">${RULES[k].icon}<span>${esc(k)}</span></button>`).join('')}</div>
+    <h3>Fields</h3><div>${r.fields.map((f, i) => `<span class="brick f ${f.sens ? 'sens' : ''}">${esc(f.label)} <button title="required" onclick="legoToggle(${i},'req')">${f.req ? '⭐' : '☆'}</button><button title="sensitive" onclick="legoToggle(${i},'sens')">${f.sens ? '🔒' : '🔓'}</button>${f.k === 'name' ? '' : `<button title="remove" onclick="legoDel(${i})">✕</button>`}</span>`).join('')}</div>
+    <div class="row" style="margin-top:8px"><input id="nfLabel" placeholder="New field, e.g. Cold-chain partner" style="flex:1;font:inherit;border:2px solid #d9c9d3;border-radius:12px;padding:6px 10px"><label><input type="checkbox" id="nfReq" checked> required</label><label><input type="checkbox" id="nfSens"> sensitive</label><button class="btn xs sky" onclick="legoAddField()">➕ Snap on</button></div>
+    <h3 style="margin-top:16px">Approval chain</h3><div>${r.chain.map((c, i) => `<span class="brick a">${c} <button onclick="legoDelStep(${i})">✕</button></span>${i < r.chain.length - 1 ? '<span class="arrow">→</span>' : ''}`).join('')} <span class="arrow">→</span> <span class="brick" style="background:#fff">📦 SAP B1</span></div>
+    ${(r.cond || []).map(c => `<div><span class="brick c">IF ${esc(c.k.toUpperCase())} = ${esc(c.v)} → add ${c.add} after ${c.after}</span></div>`).join('')}
+    <div class="row" style="margin-top:8px"><select id="nsRole" style="font:inherit;border-radius:10px;padding:4px">${roles.map(x => `<option>${x}</option>`).join('')}</select><button class="btn xs mint" onclick="legoAddStep()">➕ Add approval step</button></div></div>
+  <div class="card"><h3>🎉 Add a whole new domain or business unit</h3><p class="muted">E.g. a new regulatory process for clinical-trial sites, or Marcus's new BU. A few times a year, done in minutes by the MDM team.</p>
+    <div class="row"><input id="ndName" placeholder="e.g. Clinical Trial Site" style="flex:1;font:inherit;border:2px solid #d9c9d3;border-radius:12px;padding:6px 10px"><input id="ndIcon" value="🔬" style="width:54px;font:inherit;border:2px solid #d9c9d3;border-radius:12px;padding:6px"><button class="btn pink" onclick="legoNewDomain()">➕ New domain</button></div>
+    <div class="row" style="margin-top:10px"><input id="nbu" placeholder="New business unit code, e.g. QTV" style="flex:1;font:inherit;border:2px solid #d9c9d3;border-radius:12px;padding:6px 10px"><button class="btn sun" onclick="legoNewBU()">➕ New BU</button></div>
+    <p>Current business units: ${ENTITIES.map(e => `<span class="pill grape">${esc(e)}</span>`).join(' ')}</p>
+    <div class="note"><b>Why this matters:</b> today, adding a step means redrafting email templates and distribution lists and briefing everyone (Marcus's team waited two weeks). With Sappy the rule <i>is</i> the process: the new BU's requests route correctly from day one.</div>
+    <p class="assume">Production: these rules live in a SharePoint list / Dataverse table that Power Apps and Power Automate read at runtime. Only a new SAP B1 object type (UDO) needs a one-off partner change.</p></div></div>`;
+};
+function legoLog(t) { diary(PEOPLE[S.me].name, `changed rules: ${t}`); }
+function legoToggle(i, k) { const f = RULES[S.legoType].fields[i]; f[k] = f[k] ? 0 : 1; legoLog(`${S.legoType}.${f.label} ${k === 'req' ? 'required' : 'sensitive'} = ${!!f[k]}`); render(); }
+function legoDel(i) { const f = RULES[S.legoType].fields.splice(i, 1)[0]; legoLog(`removed field ${S.legoType}.${f.label}`); render(); }
+function legoAddField() { const l = $('#nfLabel').value.trim(); if (!l) return; RULES[S.legoType].fields.push({ k: 'f' + Date.now().toString(36), label: l, req: $('#nfReq').checked ? 1 : 0, sens: $('#nfSens').checked ? 1 : 0 }); legoLog(`added field ${S.legoType}.${l}`); toast(`🧩 “${esc(l)}” snapped onto the ${esc(S.legoType)} form. Live now in 🍼`); render(); }
+function legoDelStep(i) { const r = RULES[S.legoType]; if (r.chain.length < 2) return toast('Sappy needs at least one approver 🙈'); const s = r.chain.splice(i, 1)[0]; legoLog(`removed ${s} from ${S.legoType} chain`); render(); }
+function legoAddStep() { const r = RULES[S.legoType], v = $('#nsRole').value; if (r.chain.includes(v)) return toast(`${v} is already in the chain`); const at = r.chain.indexOf('MDM'); r.chain.splice(at < 0 ? r.chain.length : at, 0, v); legoLog(`added ${v} to ${S.legoType} chain`); toast(`🧩 ${v} added. New ${esc(S.legoType)} requests route there automatically.`); render(); }
+function legoNewDomain() { const n = $('#ndName').value.trim(); if (!n || RULES[n]) return; RULES[n] = { icon: $('#ndIcon').value || '🔬', fields: [{ k: 'name', label: n + ' name', req: 1, dup: 1 }, { k: 'owner', label: 'Owner', req: 1 }], chain: ['BU Head', 'MDM'], cond: [] }; S.legoType = n; legoLog(`created new domain “${n}” (no IT ticket 🎉)`); S.party = Date.now() + 5000; confetti('🧩'); toast(`🥳 New domain <b>${esc(n)}</b> is live in 🍼 Feed Sappy!`); render(); }
+function legoNewBU() { const n = $('#nbu').value.trim().toUpperCase(); if (!n || ENTITIES.includes(n)) return; ENTITIES.push(n); legoLog(`added business unit ${n}`); S.party = Date.now() + 4000; confetti('🏢'); toast(`🏢 ${esc(n)} added. Their requests now route correctly from day one.`); render(); }
+
+// ---------- Leaderboard ----------
+VIEWS.board = () => {
+  const base = { daniel: [2.8, 0.4, 41], weijie: [4.0, 0.9, 38], nurul: [4.1, 0.6, 22], siti: [3.2, 0.5, 30], priya: [1.5, 0.3, 64] };
+  const rows = Object.entries(base).map(([k, [b, a, n]]) => ({ k, b, a, n: n + (S.approvals[k] || 0) })).sort((x, y) => x.a - y.a);
+  const most = rows.reduce((m, r) => r.n > m.n ? r : m, rows[0]);
+  const ents = [['SPD', 2.1, 96], ['QTS', 2.6, 91], ['QTG', 4.4, 78]].concat(ENTITIES.slice(3).map(e => [e, '—', '—']));
+  return `<div class="grid2"><div class="card"><h2>🏆 Sappy's Favourite Humans</h2><p class="muted">Average time to act on a request, before (email) vs after (Sappy pilot). Badges are for fun; nobody gets shamed, Sappy just nudges.</p>
+    <table><tr><th>#</th><th>Approver</th><th class="num">Email era</th><th class="num">With Sappy</th><th class="num">Swipes</th><th>Badge</th></tr>${rows.map((r, i) => `<tr><td>${['🥇', '🥈', '🥉', '4', '5'][i]}</td><td>${PEOPLE[r.k].emoji} <b>${PEOPLE[r.k].name}</b><br><small>${PEOPLE[r.k].role}</small></td><td class="num">${r.b} days</td><td class="num"><b>${Math.round(r.a * 24)} h</b></td><td class="num">${r.n}</td><td>${i === 0 ? '⚡ Lightning Paws' : r === most ? "🍪 Sappy's Snack Provider" : r.b - r.a > 3 ? '🚀 Most Improved' : '🌱 Steady Gardener'}</td></tr>`).join('')}</table>
+    <p class="assume">Pilot numbers are illustrative assumptions for the demo; live counts update when you swipe.</p></div>
+  <div class="card"><h3>🏢 Business unit league</h3><table><tr><th>BU</th><th class="num">Avg request → SAP B1</th><th class="num">On-time (≤3 days)</th></tr>${ents.map(([e, d, p]) => `<tr><td><b>${esc(e)}</b></td><td class="num">${d}${d === '—' ? '' : ' days'}</td><td class="num">${p}${p === '—' ? '' : '%'}</td></tr>`).join('')}</table>
+    <div class="note">💡 QTG (Marcus's new BU) is slowest, so Sappy auto-sends them a 2-minute “how to feed me” onboarding card in Teams.</div>
+    <h3>Adoption tricks baked in</h3><ul><li>📧 <b>Email auto-reply</b> from the MDM mailbox: “Sappy can't eat emails 🥺 tap here to feed me properly” with a link to a pre-filled form.</li><li>🚫 <b>No form, no record</b>: the MDM team only creates SAP B1 records from Sappy after go-live (month 2).</li><li>💬 <b>Lives where people already are</b>: Teams tab + adaptive cards, no new login.</li><li>🎖️ Monthly “Sappy's Favourite Human” shout-out in the town hall.</li></ul></div></div>`;
+};
+
+// ---------- Under the Hood ----------
+VIEWS.hood = () => `<div class="card"><h2>⚙️ Under the hood: how Sappy connects to SAP B1</h2>
+  <svg viewBox="0 0 1100 330" style="width:100%;height:auto">
+    <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#3a2e39"/></marker></defs>
+    <g font-size="14" font-weight="700" fill="#3a2e39">
+      ${[[20, 40, 'Requestors', 'Amy · Marcus', '#ffe0ea'], [20, 190, 'Inbound email', 'shared mailbox', '#ffe0ea'],
+         [230, 40, '🍼 Sappy form', 'Power Apps (Teams tab)', '#fff3cf'], [230, 190, '📮 Inbox Sorter', 'Power Automate + AI classifier', '#fff3cf'],
+         [450, 40, '🧩 Rules', 'SharePoint list / Dataverse', '#efe9ff'], [450, 190, '👉 Approvals', 'Teams adaptive cards · reminders', '#efe9ff'],
+         [670, 40, '📜 Diary', 'Dataverse, hash-chained', '#e0f0ff'], [670, 190, '🛠️ MDM final check', 'Priya · one click', '#e0f0ff'],
+         [880, 115, '📦 SAP Business One', 'Service Layer REST API', '#dcf7ec'], [880, 250, '🌱🔮 Garden + Crystal Ball', 'Python job · Power BI', '#dcf7ec']]
+        .map(([x, y, t, s, c]) => `<rect x="${x}" y="${y}" width="190" height="64" rx="16" fill="${c}" stroke="#3a2e39" stroke-width="2"/><text x="${x + 95}" y="${y + 28}" text-anchor="middle">${t}</text><text x="${x + 95}" y="${y + 48}" text-anchor="middle" font-size="11" font-weight="600" fill="#8a7b88">${s}</text>`).join('')}
+      ${[[210, 72, 230, 72], [210, 222, 230, 222], [420, 72, 450, 72], [325, 104, 325, 190], [420, 222, 450, 222], [640, 222, 670, 222], [545, 104, 545, 190], [640, 72, 670, 72], [765, 190, 765, 104], [860, 222, 900, 179], [975, 179, 975, 250]]
+        .map(([a, b, c, d]) => `<line x1="${a}" y1="${b}" x2="${c}" y2="${d}" stroke="#3a2e39" stroke-width="2.5" marker-end="url(#ar)"/>`).join('')}
+      <text x="335" y="150" font-size="11" fill="#8a7b88">MDM emails → drafts</text>
+      <text x="1000" y="225" font-size="11" fill="#8a7b88">nightly PO extract</text>
+    </g></svg>
+  <p class="muted">The record is created in SAP B1 through the <b>Service Layer</b> (SAP B1's official REST API) from the approved form data, with Priya's one-click final check kept as a human control. Nightly, clean PO data flows back out to the Garden and Crystal Ball.</p></div>
+  <div class="grid3">
+    <div class="card"><h3>🛠️ Build plan (≈10 weeks)</h3><ol><li><b>Wk 1–3</b> Form + rules + Teams approvals (MDM team + 1 Power Platform maker)</li><li><b>Wk 4–5</b> Diary, masking, reminders, tracking</li><li><b>Wk 6–7</b> SAP B1 Service Layer connector (<i>outside partner, ~10 days</i>)</li><li><b>Wk 8–9</b> PO extract + forecast job + Garden (analyst)</li><li><b>Wk 10</b> Pilot with SPD, then QTS & QTG</li></ol></div>
+    <div class="card"><h3>💸 Rough cost (year 1)</h3><table><tr><td>Power Apps / Automate premium (~25 users)</td><td class="num">~S$8k</td></tr><tr><td>SAP B1 connector partner (10 days)</td><td class="num">~S$12k</td></tr><tr><td>Internal time (maker + analyst)</td><td class="num">~0.5 FTE × 3 mo</td></tr><tr><td><b>Total cash</b></td><td class="num"><b>~S$20–25k</b></td></tr></table><p class="assume">Assumes existing M365 E3/E5 licences; prices indicative.</p></div>
+    <div class="card"><h3>🙅 Deliberately NOT in v1</h3><ul><li>Fully automatic SAP creation with no human check: Priya stays the final gate until trust is earned.</li><li>An LLM chatbot for intake: a form is faster and auditable.</li><li>A full MDG / golden-record platform: overkill for SAP B1 scale.</li><li>Training ML dedupe models: fuzzy rules first, ML once labels exist.</li><li>A mobile app: Teams mobile already covers swiping.</li></ul></div></div>`;
+
+// boot (index.html#garden opens a tab directly)
+if (VIEWS[location.hash.slice(1)]) S.tab = location.hash.slice(1);
+window.addEventListener('error', e => { document.title = 'ERR: ' + e.message; });
+render();
+if (location.hash === '#tour') startTour();
+toast('👋 Hi! I\'m Sappy. New here? Click <b>❓ Guide</b> or <b>🎬 Demo tour</b> at the top.', 5000);
+</script>
+</body>
+</html>

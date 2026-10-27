@@ -1,0 +1,137 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sappy Pitch Summary</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#3a2e39;--muted:#7d6e7b;--pink:#ff7fa8;--pink2:#ffe0ea;--mint:#4cc79a;--mint2:#dcf7ec;--sun:#ffc23d;--sun2:#fff3cf;--sky2:#e0f0ff;--grape2:#efe9ff;--red2:#ffe3e5}
+@page{size:1280px 720px;margin:0}
+*{box-sizing:border-box}
+body{margin:0;background:#eee;font:13.5px/1.33 Nunito,system-ui,sans-serif;color:var(--ink)}
+.slide{width:1280px;height:720px;margin:20px auto;background:#fff8f3;position:relative;overflow:hidden;padding:24px 40px 34px;page-break-after:always;break-after:page;
+  background-image:radial-gradient(#ffe3ec 1.2px,transparent 1.2px);background-size:22px 22px}
+@media print{body{background:none}.slide{margin:0}}
+h1,h2,h3{font-family:'Baloo 2',sans-serif;margin:0;line-height:1.1}
+h1{font-size:33px}h2{font-size:19px;margin-bottom:4px}h3{font-size:16px;margin:6px 0 2px}
+.kicker{font-weight:800;color:var(--pink);letter-spacing:.08em;text-transform:uppercase;font-size:13px}
+.cols{display:grid;gap:12px;margin-top:10px}
+.box{background:#fff;border:2px solid var(--ink);border-radius:18px;padding:9px 13px;box-shadow:0 4px 0 rgba(58,46,57,.08)}
+.box.pink{background:var(--pink2)}.box.mint{background:var(--mint2)}.box.sun{background:var(--sun2)}.box.sky{background:var(--sky2)}.box.grape{background:var(--grape2)}
+ul{margin:4px 0 0;padding-left:18px}li{margin-bottom:3px}
+.big{font-family:'Baloo 2';font-size:26px;line-height:1}
+.stat{display:flex;flex-direction:column}
+.stat small{color:var(--muted);font-weight:700}
+table{border-collapse:collapse;width:100%;font-size:13px}
+td,th{padding:2px 6px;border-bottom:1.5px dashed #ecd9e2;text-align:left}
+th{font-size:11px;color:var(--muted);text-transform:uppercase}
+.num{text-align:right}
+.foot{position:absolute;left:44px;right:44px;bottom:10px;font-size:10.5px;color:var(--muted);display:flex;justify-content:space-between}
+.blob{width:96px;height:94px;position:relative;flex:none}
+.blob .b{position:absolute;inset:0 0 9% 0;border-radius:50% 50% 46% 46%/60% 60% 40% 40%;background:linear-gradient(165deg,#ffe0ea,#ff9fbf);border:3px solid var(--ink)}
+.blob .e{position:absolute;top:38%;width:11%;height:12%;background:var(--ink);border-radius:50%}.blob .e.l{left:29%}.blob .e.r{right:29%}
+.blob .m{position:absolute;left:50%;top:55%;width:20%;height:13%;transform:translateX(-50%);border:3px solid var(--ink);border-top:none;border-radius:0 0 50% 50%/0 0 100% 100%;background:#ff6f8f}
+.blob .c{position:absolute;top:55%;width:14%;height:7%;background:#ff6f99;opacity:.4;border-radius:50%}.blob .c.l{left:14%}.blob .c.r{right:14%}
+.tag{display:inline-block;border:1.5px solid var(--ink);border-radius:99px;padding:0 8px;font-size:12px;font-weight:800;background:#fff;margin:2px 2px 0 0}
+.assume{font-size:11px;color:var(--muted);font-style:italic}
+a{color:#d1356c;font-weight:800}
+</style>
+</head>
+<body>
+
+<!-- ============ SLIDE 1 ============ -->
+<section class="slide">
+  <div style="display:flex;gap:22px;align-items:center">
+    <div class="blob"><div class="b"><div class="e l"></div><div class="e r"></div><div class="c l"></div><div class="c r"></div><div class="m"></div></div></div>
+    <div><div class="kicker">SMU DSA Data Case 2026 · Lives Group</div>
+      <h1>Meet Sappy: the Master Data Pet that keeps SAP B1 clean and grows sales</h1>
+      <div style="font-size:17px;margin-top:4px">Bad master data is invisible, so nobody owns it. <b>We gave it a face.</b> Sappy's health <i>is</i> your data's health.</div></div>
+  </div>
+
+  <div class="cols" style="grid-template-columns:1fr 1.55fr">
+    <div class="box red2" style="background:var(--red2)">
+      <h2>😿 The problem</h2>
+      <ul>
+        <li><b>Email-driven MDM:</b> no standard form, so requests bounce; approvers don't see them; Amy's item code took <b>18 days</b>.</li>
+        <li><b>Duplicates</b> (“Natl. Univ. Hospital” vs “National University Hospital”) cause wrong invoices <b>and</b> distort regional PO history.</li>
+        <li><b>No audit trail</b>; bank details travel by plain email.</li>
+        <li><b>IT needed</b> for every new BU, field or approval step.</li>
+        <li><b>Forecasts</b> use flat 6–12-month averages that miss seasonality, churn and cross-sell across A/B/C in 5 countries.</li>
+      </ul>
+      <div style="margin-top:8px;font-weight:800">One root cause → two problems: <u>dirty data in</u> = slow operations <u>and</u> wrong commercial decisions.</div>
+    </div>
+
+    <div class="box">
+      <h2>💡 Our solution: Sappy, inside Microsoft Teams</h2>
+      <table>
+        <tr><th>Feature (fun name)</th><th>What it does</th><th>Pain point fixed</th></tr>
+        <tr><td>🍼 <b>Feed Sappy</b></td><td>Smart form: fields and approval route change by request type; incomplete requests get spat back</td><td>No standard form</td></tr>
+        <tr><td>💕 <b>It's a Match!</b></td><td>Fuzzy duplicate check while typing; “use existing” or justify the override</td><td>Duplicates</td></tr>
+        <tr><td>👉 <b>Swipe to approve</b></td><td>Teams adaptive cards, 24 h nudge, 72 h escalation; Sappy gets sad when you wait</td><td>2–3 week approvals</td></tr>
+        <tr><td>📦 <b>Parcel tracking</b></td><td>Every request shows where it is and its ETA</td><td>“What happened to my request?”</td></tr>
+        <tr><td>📜 <b>Sappy's Diary</b></td><td>Hash-chained audit log; sensitive fields masked, every peek logged</td><td>Audit & security</td></tr>
+        <tr><td>🧩 <b>Rule Lego</b></td><td>MDM team adds fields, steps, BUs and domains themselves</td><td>IT for every change</td></tr>
+        <tr><td>🚀 <b>One-click to SAP B1</b></td><td>Approved form → SAP B1 Service Layer, with no re-keying</td><td>Manual keying</td></tr>
+        <tr><td>🌱🔮 <b>Garden + Crystal Ball</b></td><td>5-country × A/B/C view, seasonal forecast, churn & cross-sell alerts</td><td>Weak forecasting</td></tr>
+        <tr><td>📮 <b>Inbox Sorter</b></td><td>Splits POs from enquiries, follow-ups and MDM requests</td><td>Mixed inbox</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="cols" style="grid-template-columns:repeat(4,1fr)">
+    <div class="box mint stat"><small>Request → live in SAP B1</small><span class="big">18 → ~3 days</span><small>parallel-ready routing + nudges</small></div>
+    <div class="box sun stat"><small>Forecast error (back-test, WAPE)</small><span class="big">12.6% → 4.6%</span><small>63% less error · wins 13 of 15 series</small></div>
+    <div class="box sky stat"><small>Team time saved</small><span class="big">~60 h / month</span><small>≈0.4 FTE: no chasing, no re-keying*</small></div>
+    <div class="box grape stat"><small>Duplicate rate at creation</small><span class="big">~8% → &lt;1%*</span><small>blocked before an approver sees them</small></div>
+  </div>
+  <div class="foot"><span>* Assumptions: ~60 MDM requests/month; 45 min chasing + 15 min re-keying saved per request; 8% current duplicate rate. All prototype data is synthetic.</span><span>1 / 2</span></div>
+</section>
+
+<!-- ============ SLIDE 2 ============ -->
+<section class="slide">
+  <div class="kicker">Regional business view · why Sappy · business case</div>
+  <h1 style="font-size:29px">Clean data makes the forecast smarter, and the forecast finds the sales growth</h1>
+
+  <div class="cols" style="grid-template-columns:1.25fr 1fr">
+    <div class="box">
+      <h2>🌱 5 countries × Products A/B/C · Nov '25 – Oct '26 (customer POs only)</h2>
+      <table>
+        <tr><th>Country</th><th class="num">🌷 A</th><th class="num">🌻 B</th><th class="num">🌼 C</th><th class="num">Total units</th><th class="num">YoY</th></tr>
+        <tr><td>Singapore</td><td class="num">9,144</td><td class="num">4,576</td><td class="num">754</td><td class="num">14,474</td><td class="num">+3.0%</td></tr>
+        <tr><td>Malaysia</td><td class="num">7,659</td><td class="num">3,409</td><td class="num">881</td><td class="num">11,949</td><td class="num">+17.8%</td></tr>
+        <tr><td>Thailand</td><td class="num">9,973</td><td class="num">3,028</td><td class="num">929</td><td class="num">13,930</td><td class="num" style="color:#d63c4b">−1.3%</td></tr>
+        <tr><td><b>Vietnam</b></td><td class="num">9,733</td><td class="num">5,350</td><td class="num">664</td><td class="num">15,747</td><td class="num" style="color:#1f8a63"><b>+35.4%</b></td></tr>
+        <tr><td>Indonesia</td><td class="num">7,395</td><td class="num">3,700</td><td class="num">905</td><td class="num">12,000</td><td class="num">+11.6%</td></tr>
+        <tr><td><b>All 5</b></td><td class="num"><b>43,904</b></td><td class="num"><b>20,063</b></td><td class="num"><b>4,133</b></td><td class="num"><b>68,100</b></td><td class="num"><b>+12.7%</b></td></tr>
+      </table>
+      <div class="assume" style="margin-top:4px"><b>Growth</b> = PO units Aug–Oct '26 ÷ Aug–Oct '25 − 1 (season-fair). <b>Churn signal</b> = 3-month momentum ≤ −30%. MDM setup requests, enquiries and follow-ups are counted separately and excluded.</div>
+      <h3 style="margin-top:8px">✅ Recommended actions</h3>
+      <ul style="font-size:12.8px">
+        <li>📈 <b>Vietnam, Product B</b> (+38% YoY): raise Nov–Jan allocation <b>~18%</b> ahead of the December budget-flush peak.</li>
+        <li>🥀 <b>Save at-risk accounts:</b> Bangkok Hospital (Product A falling fast), Mayapada (all lines). Account review within 2 weeks.</li>
+        <li>👻 <b>NUH looked like churn but wasn't</b>: 60% of its orders had moved to a duplicate record. <b>Merge before you call.</b></li>
+        <li>🪴 <b>Cross-sell B</b> to Medlatec (VN, ~+79 units/mo) and Prodia (ID, ~+58 units/mo); <b>C</b> to Cho Ray.</li>
+        <li>❄️ Expect a <b>~23% February dip</b> (Lunar New Year / Tết); don't misread it as churn.</li>
+      </ul>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="box sun"><h2>🔮 How AI beats “Grandma's Average”</h2>
+        Today: flat 6-month average. Sappy: <b>clean → learn seasonality pooled across all 15 country×product series → trend → re-season</b>. Back-tested on Aug–Oct '26: <b>WAPE 12.6% → 4.6%</b>. Dec '26 forecast: <b>7,295 units vs 5,928</b> flat, so we avoid under-ordering at the peak. Automated monthly, replacing ~2 days of spreadsheet work per cycle*.</div>
+      <div class="box"><h2>🤔 Why this, not the alternatives?</h2>
+        <ul style="font-size:12.8px">
+          <li><b>vs. tweaking the email process:</b> no dedupe, no audit trail, still invisible.</li>
+          <li><b>vs. a custom portal:</b> needs developers Lives Group doesn't have. Sappy runs on <b>M365 they already own</b>.</li>
+          <li><b>vs. an enterprise MDG suite:</b> overkill and costly at SAP B1 scale.</li>
+          <li><b>Not in v1:</b> auto-create without human check, LLM chatbot, ML dedupe, mobile app.</li>
+        </ul></div>
+      <div class="box mint"><h2>💸 Business case & adoption</h2>
+        <b>~S$20–25k cash, ~10 weeks</b>: Power Apps/Automate licences (~S$8k) + SAP B1 Service Layer connector partner (~S$12k, 10 days); MDM team + 1 maker build the rest*. Payback well under a year from ~0.4 FTE saved, before any sales uplift.<br>
+        <b>Getting people to use it:</b> lives in Teams (no new login) · MDM mailbox auto-replies “Sappy can't eat emails 🥺” with a pre-filled link · after month 2, <b>no form = no SAP record</b> · pilot SPD first · monthly “Sappy's Favourite Human” shout-out.</div>
+    </div>
+  </div>
+  <div class="foot"><span>🎥 Demo video: <a href="#">YOUTUBE_LINK</a> · 💻 Prototype & code: <a href="#">GITHUB_LINK</a> · * Assumptions labelled; prototype data is synthetic and seeded.</span><span>2 / 2</span></div>
+</section>
+</body>
+</html>
