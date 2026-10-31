@@ -4,8 +4,8 @@
 
 Bad master data is invisible, so nobody owns it. We gave it a face. **Sappy's health is the health of Lives Group's SAP B1 master data**: stuck approvals make it hungry, duplicates make it sick, clean data makes it bloom.
 
-- 🎥 Demo video: https://www.youtube.com/watch?v=-ALEWzCikEM
-- 🌐 Live prototype: https://data-sappy.vercel.app/
+- 🎥 Demo video: [`YouTube`](https://www.youtube.com/watch?v=-ALEWzCikEM)
+- 🌐 Live prototype: [`Sappy`](https://data-sappy.vercel.app/)
 - 📄 2-slide summary: [`Sappy_Summary_2_slides.pdf`](Sappy_Summary_2_slides.pdf) (source: `summary.html`)
 
 ## Run it
